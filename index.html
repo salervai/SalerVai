@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // আপনার রিয়েল ফায়ারবেজ কনফিগারেশন
+        // আপনার ফায়ারবেজ কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyAPyJ9-DJq0Hvq8k0Uf_wdz78GgKm9n_sw",
             authDomain: "salervai.firebaseapp.com",
@@ -846,10 +846,10 @@
     <div id="homePage" class="page-view active-page">
         <div class="container">
             
-            <!-- এককালীন অটো-আপলোড বাটন (ডাটা আপলোড হওয়ার সাথে সাথে নিজে থেকেই মুছে যাবে) -->
-            <div id="firebaseUploadContainer" style="margin: 10px 0; text-align: center;">
-                <button onclick="uploadDemoProductsToFirebase()" style="width: 100%; background: #28a745; color: white; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    🚀 ডেমো প্রডাক্টগুলো ফায়ারবেজে সেভ করুন (একবার ক্লিক করুন)
+            <!-- এককালীন ব্যানার আপলোড বাটন (আপলোড হওয়ার সাথে সাথে নিজে থেকেই মুছে যাবে) -->
+            <div id="bannerUploadContainer" style="margin: 10px 0; text-align: center;">
+                <button onclick="uploadBannersToFirebase()" style="width: 100%; background: #0dcaf0; color: #000; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    🎨 ডেমো ব্যানারগুলো ফায়ারবেজে সেভ করুন (একবার ক্লিক করুন)
                 </button>
             </div>
 
@@ -1286,40 +1286,27 @@
     </div>
 
     <script>
-        // ফায়ারবেজে ডেমো প্রডাক্ট অটো-আপলোড করার ফাংশন (আপলোড শেষে বাটন নিজে থেকেই ডিলিট হয়ে যাবে)
-        async function uploadDemoProductsToFirebase() {
-            if(!confirm("আপনি কি ডেমো প্রডাক্টগুলো ফায়ারবেজ ডাটাবেজে আপলোড করতে চান?")) return;
+        // ডেমো ব্যানার ফায়ারবেজে অটো-আপলোড করার ফাংশন (আপলোড শেষে বাটন নিজে থেকেই ডিলিট হয়ে যাবে)
+        async function uploadBannersToFirebase() {
+            if(!confirm("আপনি কি ডেমো ব্যানারগুলো ফায়ারবেজ ডাটাবেজে আপলোড করতে চান?")) return;
             
             try {
-                for (const categoryName in allProducts) {
-                    const productList = allProducts[categoryName];
-                    for (const product of productList) {
-                        await db.collection("products").add({
-                            category: categoryName,
-                            brand: product.brand,
-                            model: product.model,
-                            color: product.color,
-                            size: product.size,
-                            washable: product.washable,
-                            name: product.name,
-                            sub: product.sub,
-                            price: product.price,
-                            oldPrice: product.oldPrice,
-                            numericPrice: product.numericPrice,
-                            discount: product.discount,
-                            rating: product.rating,
-                            imgs: product.imgs,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                    }
+                for (const banner of banners) {
+                    await db.collection("banners").add({
+                        title: banner.title,
+                        desc: banner.desc,
+                        tag: banner.tag,
+                        bg: banner.bg,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 }
-                alert('আলহামদুলিল্লাহ! সকল ডেমো প্রডাক্ট সফলভাবে ফায়ারবেজে সেভ হয়েছে।');
+                alert('আলহামদুলিল্লাহ! সকল ডেমো ব্যানার সফলভাবে ফায়ারবেজে সেভ হয়েছে।');
                 // বাটনটি স্ক্রিন থেকে রিমুভ বা ডিলিট করে দেওয়া
-                const btnContainer = document.getElementById('firebaseUploadContainer');
+                const btnContainer = document.getElementById('bannerUploadContainer');
                 if(btnContainer) btnContainer.remove();
             } catch (error) {
                 console.error("ত্রুটি:", error);
-                alert('প্রডাক্ট আপলোড করতে সমস্যা হয়েছে: ' + error.message);
+                alert('ব্যানার আপলোড করতে সমস্যা হয়েছে: ' + error.message);
             }
         }
 
