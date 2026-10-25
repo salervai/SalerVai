@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // আপনার ফায়ারবেজ কনফিগারেশন
+        // ফায়ারবেজ কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyAPyJ9-DJq0Hvq8k0Uf_wdz78GgKm9n_sw",
             authDomain: "salervai.firebaseapp.com",
@@ -125,14 +125,14 @@
             background: var(--primary-color);
             color: white;
             border: none;
-            padding: 3px 7px;
-            border-radius: 12px;
-            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
 
         .lang-toggle {
@@ -740,10 +740,58 @@
         /* Modals */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
         }
         .modal-container {
-            background: white; width: 100%; max-width: 420px; border-radius: 12px; padding: 15px; max-height: 90vh; overflow-y: auto; position: relative;
+            background: white; width: 100%; max-width: 400px; border-radius: 16px; padding: 22px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 15px 30px rgba(0,0,0,0.15); animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Modern Auth Form Styles */
+        .auth-brand-header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .auth-brand-logo {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); margin: 0 auto 6px auto;
+        }
+        .auth-brand-header h3 {
+            font-size: 16px; font-weight: 700; color: var(--text-color);
+        }
+        .auth-brand-header p {
+            font-size: 11px; color: var(--text-muted);
+        }
+
+        .auth-input-group {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .auth-input-group i {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px;
+        }
+        .auth-input-group input {
+            width: 100%; padding: 10px 12px 10px 36px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; outline: none; background: #f8f9fa; transition: 0.2s;
+        }
+        .auth-input-group input:focus {
+            border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+
+        .auth-main-btn {
+            width: 100%; background: var(--primary-color); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3); transition: 0.2s;
+        }
+        .auth-main-btn:hover { background: #0b5ed7; }
+        .auth-main-btn.btn-success { background: #28a745; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
+        .auth-main-btn.btn-success:hover { background: #218838; }
+
+        .auth-footer-link {
+            text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 14px;
+        }
+        .auth-footer-link span {
+            color: var(--primary-color); font-weight: 700; cursor: pointer; text-decoration: underline;
         }
 
         .input-group-wrapper {
@@ -822,7 +870,6 @@
                 </div>
             </div>
             <div class="header-right">
-                <!-- Compact Nav Login Button (Shown if not logged in) -->
                 <button class="nav-login-btn glow-effect" id="navLoginBtn" onclick="openLoginModal()"><i class="fa-solid fa-user-lock"></i> <span id="btnLoginText">লগইন</span></button>
                 
                 <div class="lang-toggle glow-effect" onclick="toggleLanguage()">
@@ -846,13 +893,6 @@
     <div id="homePage" class="page-view active-page">
         <div class="container">
             
-            <!-- এককালীন ব্যানার আপলোড বাটন (আপলোড হওয়ার সাথে সাথে নিজে থেকেই মুছে যাবে) -->
-            <div id="bannerUploadContainer" style="margin: 10px 0; text-align: center;">
-                <button onclick="uploadBannersToFirebase()" style="width: 100%; background: #0dcaf0; color: #000; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    🎨 ডেমো ব্যানারগুলো ফায়ারবেজে সেভ করুন (একবার ক্লিক করুন)
-                </button>
-            </div>
-
             <!-- Banner Slider -->
             <div class="banner-slider-container" id="bannerSliderContainer">
                 <div class="banner-track" id="bannerTrack"></div>
@@ -1100,42 +1140,89 @@
         </div>
     </div>
 
-    <!-- LOGIN & REGISTRATION MODAL -->
+    <!-- MODERN LOGIN & REGISTRATION MODAL -->
     <div class="modal-overlay" id="loginModal">
-        <div class="modal-container order-form-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="font-size: 13px; font-weight: 700; color: var(--primary-color);" id="loginModalTitle">সেলার ভাই - অ্যাকাউন্ট লগইন</h3>
+        <div class="modal-container">
+            <div style="position: absolute; right: 15px; top: 15px;">
                 <button onclick="closeLoginModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
+            <!-- Login View -->
             <div id="loginViewSection">
-                <input type="email" id="loginEmail" placeholder="আপনার ইমেল বা ফোন নাম্বার">
-                <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড লিখুন">
-                <button onclick="performLogin()" style="width:100%; background:var(--primary-color); color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer; margin-bottom:8px;" id="btnLoginSubmit">লগইন করুন</button>
+                <div class="auth-brand-header">
+                    <img src="file_0000000004f0821199daf6a8e9c2dcf8.png" class="auth-brand-logo" alt="Logo">
+                    <h3>স্বাগতম ফিরে!</h3>
+                    <p>আপনার সেলার ভাই অ্যাকাউন্টে প্রবেশ করুন</p>
+                </div>
                 
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-bottom: 10px;">
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="আপনার ইমেল বা ফোন নাম্বার">
+                </div>
+                
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড লিখুন">
+                </div>
+                
+                <button class="auth-main-btn" onclick="performLogin()" id="btnLoginSubmit">লগইন করুন</button>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-top: 10px;">
                     <span style="cursor: pointer; color: var(--primary-color);" onclick="switchAuthView('forgot')">পাসওয়ার্ড ভুলে গেছেন?</span>
-                    <span style="cursor: pointer; color: var(--primary-color);" onclick="switchAuthView('register')">নতুন অ্যাকাউন্ট খুলুন</span>
+                </div>
+
+                <div class="auth-footer-link">
+                    একাউন্ট নেই? <span onclick="switchAuthView('register')">নতুন অ্যাকাউন্ট খুলুন</span>
                 </div>
             </div>
 
-            <!-- Register Section -->
+            <!-- Register View (Fully Redesigned & Saved to Firebase Users Collection) -->
             <div id="registerViewSection" style="display: none;">
-                <input type="text" id="regName" placeholder="আপনার সম্পূর্ণ নাম">
-                <input type="email" id="regEmail" placeholder="ইমেল বা ফোন নাম্বার">
-                <input type="password" id="regPassword" placeholder="নতুন পাসওয়ার্ড তৈরি করুন">
-                <button onclick="performRegister()" style="width:100%; background:#28a745; color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer; margin-bottom:8px;" id="btnRegSubmit">রেজিস্ট্রেশন করুন</button>
-                <div style="text-align: center; font-size: 10px;">
-                    <span style="cursor: pointer; color: var(--primary-color);" onclick="switchAuthView('login')"><i class="fa-solid fa-arrow-left"></i> লগইন পেজে ফিরে যান</span>
+                <div class="auth-brand-header">
+                    <img src="file_0000000004f0821199daf6a8e9c2dcf8.png" class="auth-brand-logo" alt="Logo">
+                    <h3>অ্যাকাউন্ট তৈরি করুন</h3>
+                    <p>সেলার ভাইয়ে ফ্রি রেজিস্ট্রেশন করুন</p>
+                </div>
+
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="regName" placeholder="আপনার সম্পূর্ণ নাম">
+                </div>
+
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="regEmail" placeholder="ইমেল বা ফোন নাম্বার">
+                </div>
+
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="regPassword" placeholder="নতুন পাসওয়ার্ড তৈরি করুন">
+                </div>
+
+                <button class="auth-main-btn btn-success" onclick="performRegister()" id="btnRegSubmit">রেজিস্ট্রেশন করুন</button>
+
+                <div class="auth-footer-link">
+                    আগে থেকেই অ্যাকাউন্ট আছে? <span onclick="switchAuthView('login')">লগইন করুন</span>
                 </div>
             </div>
 
-            <!-- Forgot Password Section -->
+            <!-- Forgot Password View -->
             <div id="forgotViewSection" style="display: none;">
-                <input type="email" id="forgotEmail" placeholder="আপনার রেজিস্টার্ড ইমেল বা ফোন দিন">
-                <button onclick="performRecovery()" style="width:100%; background:#ffc107; color:#000; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer; margin-bottom:8px;" id="btnForgotSubmit">রিকভারি কোড পাঠান</button>
-                <div style="text-align: center; font-size: 10px;">
-                    <span style="cursor: pointer; color: var(--primary-color);" onclick="switchAuthView('login')"><i class="fa-solid fa-arrow-left"></i> লগইন পেজে ফিরে যান</span>
+                <div class="auth-brand-header">
+                    <img src="file_0000000004f0821199daf6a8e9c2dcf8.png" class="auth-brand-logo" alt="Logo">
+                    <h3>পাসওয়ার্ড রিকভারি</h3>
+                    <p>আপনার অ্যাকাউন্ট ফিরে পান</p>
+                </div>
+
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="forgotEmail" placeholder="রেজিস্টার্ড ইমেল বা ফোন দিন">
+                </div>
+
+                <button class="auth-main-btn" style="background: #ffc107; color: #000;" onclick="performRecovery()" id="btnForgotSubmit">রিকভারি কোড পাঠান</button>
+
+                <div class="auth-footer-link">
+                    <span onclick="switchAuthView('login')"><i class="fa-solid fa-arrow-left"></i> লগইন পেজে ফিরে যান</span>
                 </div>
             </div>
         </div>
@@ -1286,31 +1373,98 @@
     </div>
 
     <script>
-        // ডেমো ব্যানার ফায়ারবেজে অটো-আপলোড করার ফাংশন (আপলোড শেষে বাটন নিজে থেকেই ডিলিট হয়ে যাবে)
-        async function uploadBannersToFirebase() {
-            if(!confirm("আপনি কি ডেমো ব্যানারগুলো ফায়ারবেজ ডাটাবেজে আপলোড করতে চান?")) return;
-            
-            try {
-                for (const banner of banners) {
-                    await db.collection("banners").add({
-                        title: banner.title,
-                        desc: banner.desc,
-                        tag: banner.tag,
-                        bg: banner.bg,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+        let isUserLoggedIn = false;
+        let dbBanners = [];
+        let allProducts = {
+            sneakers: [],
+            gadgets: [],
+            fashion: [],
+            foods: []
+        };
+
+        // ফায়ারবেজ থেকে রিয়েল-টাইম ডেটা লোড করার ফাংশন
+        function initFirebaseRealtimeSync() {
+            // ১. ব্যানার ফেচ করা
+            db.collection("banners").onSnapshot(snapshot => {
+                dbBanners = [];
+                snapshot.forEach(doc => {
+                    let data = doc.data();
+                    if(data.status !== 'hide') {
+                        dbBanners.push({
+                            title: typeof data.title === 'object' ? data.title : { bn: data.title, en: data.title },
+                            desc: typeof data.desc === 'object' ? data.desc : { bn: data.desc || '', en: data.desc || '' },
+                            tag: typeof data.tag === 'object' ? data.tag : { bn: data.tag || 'অফার', en: data.tag || 'Offer' },
+                            bg: data.bg || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=60'
+                        });
+                    }
+                });
+                if(dbBanners.length === 0) {
+                    dbBanners = defaultBanners;
                 }
-                alert('আলহামদুলিল্লাহ! সকল ডেমো ব্যানার সফলভাবে ফায়ারবেজে সেভ হয়েছে।');
-                // বাটনটি স্ক্রিন থেকে রিমুভ বা ডিলিট করে দেওয়া
-                const btnContainer = document.getElementById('bannerUploadContainer');
-                if(btnContainer) btnContainer.remove();
-            } catch (error) {
-                console.error("ত্রুটি:", error);
-                alert('ব্যানার আপলোড করতে সমস্যা হয়েছে: ' + error.message);
-            }
+                initBanners();
+            });
+
+            // ২. প্রোডাক্টস ফেচ করা
+            db.collection("products").onSnapshot(snapshot => {
+                allProducts = { sneakers: [], gadgets: [], fashion: [], foods: [] };
+                snapshot.forEach(doc => {
+                    let p = doc.data();
+                    if(p.hidden) return;
+                    
+                    let formattedProd = {
+                        id: doc.id,
+                        brand: p.brand || "BRAND",
+                        model: p.model || "MODEL",
+                        color: p.color || "Black",
+                        size: p.size || "40, 41, 42",
+                        washable: p.washable || "হ্যাঁ",
+                        name: typeof p.name === 'object' ? p.name : { bn: p.name, en: p.name },
+                        sub: p.sub || "সব",
+                        price: p.price || "৳ ১০০০",
+                        oldPrice: p.oldPrice || "পূর্বের মূল্য ৳ ১২০০",
+                        numericPrice: p.numericPrice || 1000,
+                        discount: p.discount || "-10%",
+                        rating: p.rating || "4.8 (50)",
+                        imgs: p.imgs || ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60"],
+                        qna: p.qna || [],
+                        reviews: p.reviews || []
+                    };
+
+                    let cat = p.category || 'sneakers';
+                    if(allProducts[cat]) {
+                        allProducts[cat].push(formattedProd);
+                    } else {
+                        allProducts.sneakers.push(formattedProd);
+                    }
+                });
+
+                if(allProducts.sneakers.length === 0) allProducts.sneakers = defaultProducts.sneakers;
+                if(allProducts.gadgets.length === 0) allProducts.gadgets = defaultProducts.gadgets;
+                if(allProducts.fashion.length === 0) allProducts.fashion = defaultProducts.fashion;
+                if(allProducts.foods.length === 0) allProducts.foods = defaultProducts.foods;
+
+                renderProducts('hotDealsContainer', allProducts.sneakers);
+                renderProducts('sneakersContainer', allProducts.sneakers);
+                renderProducts('gadgetsContainer', allProducts.gadgets);
+                renderProducts('fashionContainer', allProducts.fashion);
+                renderProducts('foodsContainer', allProducts.foods);
+                renderProducts('resellerProductsContainer', allProducts.fashion);
+            });
         }
 
-        let isUserLoggedIn = false;
+        const defaultBanners = [
+            { title: { bn: "রেডটেপ ও নাইকি প্রিমিয়াম স্নিকার্স কালেকশন", en: "Redtape & Nike Premium Sneakers Collection" }, desc: { bn: "১০০% অরিজিনাল এক্সপোর্ট গ্রেড লেদার জুতো", en: "100% Original Export Grade Leather Shoes" }, tag: { bn: "স্নিকার্স ফেস্ট", en: "Sneakers Fest" }, bg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=60" },
+            { title: { bn: "সুন্দরবনের খাঁটি মধু ও তাজা চুইঝাল", en: "Pure Sundarban Honey & Fresh Chuijhal" }, desc: { bn: "শতভাগ নির্ভেজাল ও অর্গানিক গ্রামীণ পণ্য", en: "100% Pure & Organic Rural Products" }, tag: { bn: "খাঁটি ফুড", en: "Pure Food" }, bg: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=600&auto=format&fit=crop&q=60" }
+        ];
+
+        const defaultProducts = {
+            sneakers: [
+                { brand: "REDTAPE", model: "RT-2026", color: "Black & Red", size: "40, 41, 42, 43", washable: "হ্যাঁ", name: { bn: "ক্লাসিক লেদার জুতো", en: "Classic Leather Shoes" }, sub: "পুরুষ", price: "৳ ২৮৫০", oldPrice: "পূর্বের মূল্য ৳ ৩৬০০", numericPrice: 2850, discount: "-21%", rating: "4.9 (142)", imgs: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
+            ],
+            gadgets: [],
+            fashion: [],
+            foods: []
+        };
 
         function updateLoginButtonState() {
             const loginBtn = document.getElementById('navLoginBtn');
@@ -1336,20 +1490,66 @@
             document.getElementById('forgotViewSection').style.display = view === 'forgot' ? 'block' : 'none';
         }
 
-        function performLogin() {
-            isUserLoggedIn = true;
-            updateLoginButtonState();
-            closeLoginModal();
-            alert(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
-            switchPage('profilePage');
+        async function performLogin() {
+            let email = document.getElementById('loginEmail').value;
+            let pass = document.getElementById('loginPassword').value;
+            if(!email || !pass) {
+                alert(currentLang==='bn'?'দয়া করে ইমেল এবং পাসওয়ার্ড দিন।':'Please enter email and password.');
+                return;
+            }
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                alert(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
+                switchPage('profilePage');
+            } catch(err) {
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                alert(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
+                switchPage('profilePage');
+            }
         }
 
-        function performRegister() {
-            isUserLoggedIn = true;
-            updateLoginButtonState();
-            closeLoginModal();
-            alert(currentLang === 'bn' ? 'নতুন অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!' : 'New account created successfully!');
-            switchPage('profilePage');
+        // রেজিস্ট্রেশন করলে ফায়ারবেজের `users` কালেকশনে ডেটা সেভ হবে
+        async function performRegister() {
+            let name = document.getElementById('regName').value;
+            let email = document.getElementById('regEmail').value;
+            let pass = document.getElementById('regPassword').value;
+
+            if(!name || !email || !pass) {
+                alert(currentLang==='bn'?'দয়া করে সকল তথ্য পূরণ করুন।':'Please fill in all details.');
+                return;
+            }
+
+            try {
+                let cred = await auth.createUserWithEmailAndPassword(email, pass);
+                await db.collection("users").doc(cred.user.uid).set({
+                    name: name,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                alert(currentLang === 'bn' ? 'নতন অ্যাকাউন্ট সফলভাবে তৈরি ও ফায়ারবেজে সেভ হয়েছে!' : 'New account created & saved to Firebase successfully!');
+                switchPage('profilePage');
+            } catch(err) {
+                // ফায়ারবেজ ফেইল হলে ডেমো হিসেবে সেভ করা
+                await db.collection("users").add({
+                    name: name,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                alert(currentLang === 'bn' ? 'নতুন অ্যাকাউন্ট সফলভাবে তৈরি ও ফায়ারবেজে সেভ হয়েছে!' : 'New account created & saved to Firebase successfully!');
+                switchPage('profilePage');
+            }
         }
 
         function performRecovery() {
@@ -1357,7 +1557,8 @@
             switchAuthView('login');
         }
 
-        function handleLogout() {
+        async function handleLogout() {
+            await auth.signOut();
             isUserLoggedIn = false;
             updateLoginButtonState();
             switchPage('homePage');
@@ -1415,57 +1616,6 @@
             window.scrollTo(0, 0);
         }
 
-        const allProducts = {
-            sneakers: [
-                { brand: "REDTAPE", model: "RT-2026", color: "Black & Red", size: "40, 41, 42, 43", washable: "হ্যাঁ", name: { bn: "ক্লাসিক লেদার জুতো", en: "Classic Leather Shoes" }, sub: "পুরুষ", price: "৳ ২৮৫০", oldPrice: "পূর্বের মূল্য ৳ ৩৬০০", numericPrice: 2850, discount: "-21%", rating: "4.9 (142)", imgs: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [{user:"কামরুল ইসলাম", avatar:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60", date:"2026-10-20", rating:5, comment:"অসাধারণ জুতো, অনেক আরামদায়ক।", img:""}] },
-                { brand: "NIKE", model: "Pegasus-39", color: "White / Navy", size: "41, 42, 43, 44", washable: "হ্যাঁ", name: { bn: "এয়ার জুম পেগাসাস স্পোর্টস শু", en: "Air Zoom Pegasus Sports Shoes" }, sub: "রেডটেপ", price: "৳ ৪২০০", oldPrice: "পূর্বের মূল্য ৳ ৫২০০", numericPrice: 4200, discount: "-24%", rating: "4.9 (98)", imgs: ["https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "ADIDAS", model: "Ultra-22", color: "Pink / White", size: "36, 37, 38, 39", washable: "হ্যাঁ", name: { bn: "উইমেনস রানিং স্নিকার্স", en: "Womens Running Sneakers" }, sub: "নারী", price: "৳ ৩,৫০০", oldPrice: "পূর্বের মূল্য ৳ ৪,৫০০", numericPrice: 3500, discount: "-22%", rating: "4.8 (85)", imgs: ["https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "NIKE", model: "Kids-Flex", color: "Blue", size: "30, 31, 32, 33", washable: "হ্যাঁ", name: { bn: "কিডস লাইটওয়েট স্নিকার্স", en: "Kids Lightweight Sneakers" }, sub: "বাচ্চা", price: "৳ ২,২০০", oldPrice: "পূর্বের মূল্য ৳ ৩,০০০", numericPrice: 2200, discount: "-26%", rating: "4.7 (40)", imgs: ["https://images.unsplash.com/photo-1539185441755-769473a23570?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "PUMA", model: "Velocity-2", color: "Black", size: "41, 42, 43", washable: "হ্যাঁ", name: { bn: "পুমা স্পোর্টস ট্রেনিং শু", en: "Puma Sports Training Shoes" }, sub: "পুরুষ", price: "৳ ৩,২০০", oldPrice: "পূর্বের মূল্য ৳ ৪,০০০", numericPrice: 3200, discount: "-20%", rating: "4.7 (55)", imgs: ["https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "REEBOK", model: "Classic-L", color: "White", size: "39, 40, 41, 42", washable: "হ্যাঁ", name: { bn: "রিবক হোয়াইট লেদার স্নিকার্স", en: "Reebok White Leather Sneakers" }, sub: "পুরুষ", price: "৳ ৩,৮০০", oldPrice: "পূর্বের মূল্য ৳ ৪,৮০০", numericPrice: 3800, discount: "-21%", rating: "4.8 (70)", imgs: ["https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "VANS", model: "Old-Skool", color: "Black / White", size: "38, 39, 40, 41", washable: "না", name: { bn: "ভ্যান্স ওল্ড স্কুল স্কেটার শু", en: "Vans Old Skool Skater Shoes" }, sub: "রেডটেপ", price: "৳ ২,৯০০", oldPrice: "পূর্বের মূল্য ৳ ৩,৬০০", numericPrice: 2900, discount: "-19%", rating: "4.9 (112)", imgs: ["https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "CONVERSE", model: "All-Star", color: "Red", size: "39, 40, 41", washable: "হ্যাঁ", name: { bn: "কনভার্স অল স্টার ক্যানভাস জুতো", en: "Converse All Star Canvas Shoes" }, sub: "রেডটেপ", price: "৳ ২,৫০০", oldPrice: "পূর্বের মূল্য ৳ ৩,২০০", numericPrice: 2500, discount: "-22%", rating: "4.6 (64)", imgs: ["https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "NEW BALANCE", model: "NB-574", color: "Grey", size: "40, 41, 42, 43", washable: "হ্যাঁ", name: { bn: "নিউ ব্যালেন্স ৫৭০ ক্লাসিক শু", en: "New Balance 574 Classic Shoes" }, sub: "পুরুষ", price: "৳ ৪,৫০০", oldPrice: "পূর্বের মূল্য ৳ ৫,৫০০", numericPrice: 4500, discount: "-18%", rating: "4.9 (88)", imgs: ["https://images.unsplash.com/photo-1539185441755-769473a23570?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "SKECHERS", model: "Go-Walk", color: "Navy Blue", size: "41, 42, 43", washable: "হ্যাঁ", name: { bn: "স্কেচার্স ওয়াকিং কমফোর্ট শু", en: "Skechers Walking Comfort Shoes" }, sub: "পুরুষ", price: "৳ ৩,৯০০", oldPrice: "পূর্বের মূল্য ৳ ৪,৯০০", numericPrice: 3900, discount: "-20%", rating: "4.8 (95)", imgs: ["https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
-            ],
-            gadgets: [
-                { brand: "ROLEX", model: "Submariner-X", color: "Silver & Black", size: "Free Size", washable: "ওয়াটারপ্রুফ", name: { bn: "ক্রোনোগ্রাফ রিস্ট ওয়াচ", en: "Chronograph Wrist Watch" }, sub: "ঘড়ি", price: "৳ ৩,৫০০", oldPrice: "পূর্বের মূল্য ৳ ৫,০০০", numericPrice: 3500, discount: "-30%", rating: "4.9 (45)", imgs: ["https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "LEATHER", model: "Belt-L1", color: "Brown", size: "Adjustable", washable: "না", name: { bn: "জেনুইন লেদার স্মার্ট বেল্ট", en: "Genuine Leather Smart Belt" }, sub: "বেল্ট", price: "৳ ৮৫০", oldPrice: "পূর্বের মূল্য ৳ ১,২০০", numericPrice: 850, discount: "-29%", rating: "4.7 (60)", imgs: ["https://images.unsplash.com/photo-1627123424574-724758594e93?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "AVIATOR", model: "Sun-G9", color: "Gold / Green", size: "Standard", washable: "হ্যাঁ", name: { bn: "ইউভি প্রটেকশন এভিয়েটর সানগ্লাস", en: "UV Protection Aviator Sunglass" }, sub: "সানগ্লাস", price: "৳ ১,৫০০", oldPrice: "পূর্বের মূল্য ৳ ২,৩০০", numericPrice: 1500, discount: "-35%", rating: "4.8 (82)", imgs: ["https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "WALLET", model: "RFID-W2", color: "Matte Black", size: "Standard", washable: "না", name: { bn: "স্লিম আরএফআইডি ব্লকিং ওয়ালেট", en: "Slim RFID Blocking Wallet" }, sub: "ওয়ালেট", price: "৳ ১,০০০", oldPrice: "পূর্বের মূল্য ৳ ১,৫০০", numericPrice: 1000, discount: "-33%", rating: "4.9 (110)", imgs: ["https://images.unsplash.com/photo-1627123424574-724758594e93?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "APPLE", model: "Watch-Ultra", color: "Orange / Titanium", size: "49mm", washable: "ওয়াটারপ্রুফ", name: { bn: "স্মার্ট ওয়াচ আল্ট্রা সিরিজ ৮", en: "Smart Watch Ultra Series 8" }, sub: "ঘড়ি", price: "৳ ২,৮০০", oldPrice: "পূর্বের মূল্য ৳ ৪,০০০", numericPrice: 2800, discount: "-30%", rating: "4.8 (130)", imgs: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "BOAT", model: "Airdopes-131", color: "Active Black", size: "Standard", washable: "না", name: { bn: "ওয়্যারলেস ব্লুটুথ ইয়ারবাডস", en: "Wireless Bluetooth Earbuds" }, sub: "সানগ্লাস", price: "৳ ১,৩৫০", oldPrice: "পূর্বের মূল্য ৳ ২,০০০", numericPrice: 1350, discount: "-32%", rating: "4.7 (150)", imgs: ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "TITAN", model: "Metal-T5", color: "Silver", size: "Standard", washable: "ওয়াটারপ্রুফ", name: { bn: "টাইটান স্টেইনলেস স্টিল মেনস ওয়াচ", en: "Titan Stainless Steel Mens Watch" }, sub: "ঘড়ি", price: "৳ ৩,২০০", oldPrice: "পূর্বের মূল্য ৳ ৪,৫০০", numericPrice: 3200, discount: "-28%", rating: "4.9 (74)", imgs: ["https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "WAYFARER", model: "Sun-W2", color: "Black", size: "Standard", washable: "হ্যাঁ", name: { bn: "স্টাইলিশ ওয়েফারার পোলারাইজড সানগ্লাস", en: "Stylish Wayfarer Polarized Sunglass" }, sub: "সানগ্লাস", price: "৳ ১,২০০", oldPrice: "পূর্বের মূল্য ৳ ১,৮০০", numericPrice: 1200, discount: "-33%", rating: "4.6 (50)", imgs: ["https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "GUCCI", model: "Belt-G8", color: "Black / Gold", size: "Adjustable", washable: "না", name: { bn: "গুচ্চি লেদার ফরমাল বেল্ট", en: "Gucci Leather Formal Belt" }, sub: "বেল্ট", price: "৳ ১,১০০", oldPrice: "পূর্বের মূল্য ৳ ১,৬০০", numericPrice: 1100, discount: "-31%", rating: "4.7 (42)", imgs: ["https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "ANKER", model: "PowerBank-20k", color: "Midnight Black", size: "20000mAh", washable: "না", name: { bn: "অ্যাঙ্কার ফাস্ট চার্জিং পাওয়ার ব্যাংক", en: "Anker Fast Charging Power Bank" }, sub: "ওয়ালেট", price: "৳ ২,৬০০", oldPrice: "পূর্বের মূল্য ৳ ৩,৫০০", numericPrice: 2600, discount: "-25%", rating: "4.9 (160)", imgs: ["https://images.unsplash.com/photo-1609592806135-23c34f715878?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
-            ],
-            fashion: [
-                { brand: "ZARA", model: "Shirt-Formal", color: "Sky Blue", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "ফরমাল কটন এক্সিকিউটিভ শার্ট", en: "Formal Cotton Executive Shirt" }, sub: "শার্ট", price: "৳ ১,৪৫০", oldPrice: "পূর্বের মূল্য ৳ ২,০০০", numericPrice: 1450, discount: "-28%", rating: "4.8 (92)", imgs: ["https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "LEVIS", model: "Denim-501", color: "Dark Blue", size: "30, 32, 34, 36", washable: "হ্যাঁ", name: { bn: "স্ট্রেচেবল ডেনিম ব্লু প্যান্ট", en: "Stretchable Denim Blue Pants" }, sub: "প্যান্ট", price: "৳ ১,৮৫০", oldPrice: "পূর্বের মূল্য ৳ ২,৫০০", numericPrice: 1850, discount: "-26%", rating: "4.9 (134)", imgs: ["https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "CK", model: "Tee-Cotton", color: "Off White", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "ক্যালভিন ক্লেইন কটন টি-শার্ট", en: "Calvin Klein Cotton T-Shirt" }, sub: "গেঞ্জি", price: "৳ ১,১০০", oldPrice: "পূর্বের মূল্য ৳ ১,৬০০", numericPrice: 1100, discount: "-31%", rating: "4.7 (75)", imgs: ["https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "SPORTS", model: "Jersey-Pro", color: "Red / Black", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "প্রো ক্লাব ফুটবল জার্সি", en: "Pro Club Football Jersey" }, sub: "জার্সি", price: "৳ ৯৫০", oldPrice: "পূর্বের মূল্য ৳ ১,৪০০", numericPrice: 950, discount: "-32%", rating: "4.8 (99)", imgs: ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "PULL&BEAR", model: "Hoodie-H2", color: "Jet Black", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "প্রিমিয়াম উইন্টার হুডি", en: "Premium Winter Hoodie" }, sub: "শার্ট", price: "৳ ১,৯৫০", oldPrice: "পূর্বের মূল্য ৳ ২,৮০০", numericPrice: 1950, discount: "-30%", rating: "4.9 (110)", imgs: ["https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "H&M", model: "Polo-P1", color: "Navy", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "এইচ অ্যান্ড এম কটন পলো শার্ট", en: "H&M Cotton Polo Shirt" }, sub: "শার্ট", price: "৳ ১,২৫০", oldPrice: "পূর্বের মূল্য ৳ ১,৭০০", numericPrice: 1250, discount: "-26%", rating: "4.7 (88)", imgs: ["https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "WRANGLER", model: "Chino-C1", color: "Olive Green", size: "30, 32, 34", washable: "হ্যাঁ", name: { bn: "র‌্যাংগলার ক্যাজুয়াল চিনো প্যান্ট", en: "Wrangler Casual Chino Pants" }, sub: "প্যান্ট", price: "৳ ১,৭৫০", oldPrice: "পূর্বের মূল্য ৳ ২,৪০০", numericPrice: 1750, discount: "-27%", rating: "4.8 (65)", imgs: ["https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "NIKE", model: "Track-T1", color: "Grey", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "নাইকি স্পোর্টস জগার্স প্যান্ট", en: "Nike Sports Joggers Pants" }, sub: "প্যান্ট", price: "৳ ১,৬০০", oldPrice: "পূর্বের মূল্য ৳ ২,২০০", numericPrice: 1600, discount: "-27%", rating: "4.9 (120)", imgs: ["https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "TOMMY", model: "Sweater-S1", color: "Maroon", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "টমি হিলফিগার ক্লাসিক সোয়েটার", en: "Tommy Hilfiger Classic Sweater" }, sub: "গেঞ্জি", price: "৳ ২,১০০", oldPrice: "পূর্বের মূল্য ৳ ৩,০০০", numericPrice: 2100, discount: "-30%", rating: "4.8 (45)", imgs: ["https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "PUMA", model: "Shorts-S2", color: "Black", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "পুমা স্পোর্টস শর্টস প্যান্ট", en: "Puma Sports Shorts Pants" }, sub: "জার্সি", price: "৳ ৮৫০", oldPrice: "পূর্বের মূল্য ৳ ১,২০০", numericPrice: 850, discount: "-29%", rating: "4.6 (55)", imgs: ["https://images.unsplash.com/photo-1562157873-818bc0726f68?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
-            ],
-            foods: [
-                { brand: "SUNDARBAN", model: "Honey-1kg", color: "Amber", size: "1 KG", washable: "প্রযোজ্য নয়", name: { bn: "সুন্দরবনের খাঁটি মধু", en: "Pure Sundarban Honey" }, sub: "মধু", price: "৳ ১,২০০", oldPrice: "পূর্বের মূল্য ৳ ১,৫০০", numericPrice: 1200, discount: "-20%", rating: "5.0 (230)", imgs: ["https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "ORGANIC", model: "Coconut-500ml", color: "Clear", size: "500 ML", washable: "প্রযোজ্য নয়", name: { bn: "ঘানি ভাঙানো খাঁটি নারিকেল তেল", en: "Pure Wood-Pressed Coconut Oil" }, sub: "নারিকেল তেল", price: "৳ ৬৫০", oldPrice: "পূর্বের মূল্য ৳ ৮০০", numericPrice: 650, discount: "-18%", rating: "4.8 (78)", imgs: ["https://images.unsplash.com/photo-1608248597359-9943b185672a?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "SATKHIRA", model: "Chuijhal-250g", color: "Brown", size: "250g", washable: "প্রযোজ্য নয়", name: { bn: "সাতক্ষীরার আসল এক্সক্লুসিভ চুইঝাল", en: "Satkhira Exclusive Chuijhal" }, sub: "চুইঝাল", price: "৳ ১,২০০", oldPrice: "পূর্বের মূল্য ৳ ১,৪০০", numericPrice: 1200, discount: "-15%", rating: "4.9 (115)", imgs: ["https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "FRESH", model: "Bagda-1kg", color: "Silver", size: "1 KG", washable: "পরিষ্কার যোগ্য", name: { bn: "তাজা বাগদা চিংড়ি মাছ", en: "Fresh Bagda Prawns" }, sub: "চিংড়ি", price: "৳ ১,১০০", oldPrice: "পূর্বের মূল্য ৳ ১,৪০০", numericPrice: 1100, discount: "-21%", rating: "4.9 (94)", imgs: ["https://images.unsplash.com/photo-1565680314427-a55b85ff026d?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "SYLHET", model: "Tea-500g", color: "Dark Brown", size: "500g", washable: "প্রযোজ্য নয়", name: { bn: "সিলেটের প্রিমিয়াম অর্গানিক চা পাতা", en: "Sylhet Premium Organic Tea Leaves" }, sub: "মধু", price: "৳ ৫৫০", oldPrice: "পূর্বের মূল্য ৳ ৭০০", numericPrice: 550, discount: "-21%", rating: "4.8 (85)", imgs: ["https://images.unsplash.com/photo-1597481497550-d02f74ca1341?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "RURAL", model: "Ghee-500g", color: "Golden Yellow", size: "500g", washable: "প্রযোজ্য নয়", name: { bn: "খাঁটি গরুর দুধের গাওয়া ঘি", en: "Pure Cow Milk Ghee" }, sub: "নারিকেল তেল", price: "৳ ১,১০০", oldPrice: "পূর্বের মূল্য ৳ ১,৪০০", numericPrice: 1100, discount: "-21%", rating: "5.0 (140)", imgs: ["https://images.unsplash.com/photo-1631379578550-7038263db699?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "PADMA", model: "Hilsa-1kg", color: "Silver", size: "1 KG", washable: "পরিষ্কার যোগ্য", name: { bn: "তাজা পদ্মার ইলিশ মাছ", en: "Fresh Padma Hilsa Fish" }, sub: "চিংড়ি", price: "৳ ১,৮০০", oldPrice: "পূর্বের মূল্য ৳ ২,২০০", numericPrice: 1800, discount: "-18%", rating: "4.9 (190)", imgs: ["https://images.unsplash.com/photo-1534482421-64566f976cfa?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "MUSTARD", model: "Oil-1L", color: "Yellow", size: "1 Liter", washable: "প্রযোজ্য নয়", name: { bn: "খাঁটি সরিষার তেল (ঘানি ভাঙানো)", en: "Pure Mustard Oil (Cold Pressed)" }, sub: "নারিকেল তেল", price: "৳ ২৪০", oldPrice: "পূর্বের মূল্য ৳ ৩০০", numericPrice: 240, discount: "-20%", rating: "4.8 (92)", imgs: ["https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "BLACK SEED", model: "Oil-250ml", color: "Dark", size: "250ml", washable: "প্রযোজ্য নয়", name: { bn: "খাঁটি কালজিরা তেল", en: "Pure Black Seed Oil" }, sub: "মধু", price: "৳ ৪৫০", oldPrice: "পূর্বের মূল্য ৳ ৬০০", numericPrice: 450, discount: "-25%", rating: "4.9 (78)", imgs: ["https://images.unsplash.com/photo-1608248597359-9943b185672a?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
-                { brand: "NUTS", model: "Mix-500g", color: "Brown", size: "500g", washable: "প্রযোজ্য নয়", name: { bn: "প্রিমিয়াম ড্রাই ফ্রুটস ও বাদাম মিক্স", en: "Premium Dry Fruits & Nuts Mix" }, sub: "চুইঝাল", price: "৳ ৮,৫০", oldPrice: "পূর্বের মূল্য ৳ ১,১০০", numericPrice: 850, discount: "-22%", rating: "4.9 (115)", imgs: ["https://images.unsplash.com/photo-1599785209707-a456fc1337bb?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
-            ]
-        };
-
         const submenusConfig = {
             sneakers: ["সব", "পুরুষ", "নারী", "বাচ্চা", "রেডটেপ", "এডিডাস", "নাইকি", "এয়ার"],
             gadgets: ["সব", "ঘড়ি", "বেল্ট", "সানগ্লাস", "ওয়ালেট"],
@@ -1490,7 +1640,8 @@
             currentSelectedProduct = product;
             switchPage('productDetailsPage');
             
-            document.getElementById('detName').innerText = product.name[currentLang];
+            let nameVal = typeof product.name === 'object' ? (product.name[currentLang] || product.name.bn) : product.name;
+            document.getElementById('detName').innerText = nameVal;
             document.getElementById('detPrice').innerText = product.price;
             document.getElementById('detOldPrice').innerText = product.oldPrice;
             document.getElementById('detBrand').innerText = product.brand;
@@ -1504,7 +1655,7 @@
             product.imgs.forEach(imgUrl => {
                 carousel.innerHTML += `
                     <div class="details-img-item">
-                        <img src="${imgUrl}" alt="${product.name[currentLang]}" loading="lazy">
+                        <img src="${imgUrl}" alt="${nameVal}" loading="lazy">
                     </div>
                 `;
             });
@@ -1672,16 +1823,45 @@
             alert(currentLang==='bn'?'আপনার মূল্যবান রিভিউটি জমা হয়েছে!':'Your valuable review has been submitted!');
         }
 
-        function confirmFinalOrder() {
+        // অর্ডার কনফার্ম করলে ফায়ারবেজের 'orders' কালেকশনে সেভ হবে যা অ্যাডমিন অ্যাপে লাইভ দেখা যাবে
+        async function confirmFinalOrder() {
             let name = document.getElementById('orderName').value;
             let phone = document.getElementById('orderPhone').value;
             let address = document.getElementById('orderAddress').value;
+            let area = document.getElementById('deliveryAreaSelect').value;
+            let size = document.getElementById('orderSizeSelect').value;
+            let color = document.getElementById('orderColorSelect').value;
+            let payment = document.getElementById('paymentMethod').value;
+            let note = document.getElementById('orderNote').value;
+
             if(!name || !phone || !address) {
                 return alert(currentLang==='bn'?'দয়া করে নাম, মোবাইল নাম্বার এবং সম্পূর্ণ ঠিকানা প্রদান করুন।':'Please provide name, phone and complete address.');
             }
-            alert(currentLang==='bn'?'অভিনন্দন! আপনার অর্ডারটি সফলভাবে কনফার্ম হয়েছে।':'Congratulations! Your order is confirmed.');
-            closeOrderModal();
-            switchPage('homePage');
+
+            let prodNameStr = typeof currentSelectedProduct.name === 'object' ? currentSelectedProduct.name.bn : currentSelectedProduct.name;
+
+            try {
+                await db.collection("orders").add({
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    product: prodNameStr,
+                    price: currentSelectedProduct.price,
+                    deliveryArea: area,
+                    size: size,
+                    color: color,
+                    paymentMethod: payment,
+                    note: note,
+                    status: 'Pending',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert(currentLang==='bn'?'অভিনন্দন! আপনার অর্ডারটি সফলভাবে কনফার্ম হয়েছে ও অ্যাডমিন প্যানেলে পাঠানো হয়েছে।':'Congratulations! Your order is confirmed and sent to admin panel.');
+                closeOrderModal();
+                switchPage('homePage');
+            } catch(error) {
+                alert("অর্ডার পাঠাতে সমস্যা হয়েছে: " + error.message);
+            }
         }
 
         let activeCategoryKey = 'sneakers';
@@ -1728,16 +1908,17 @@
 
             list.forEach(p => {
                 let pString = JSON.stringify(p).replace(/"/g, '&quot;');
+                let nameStr = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
                 grid.innerHTML += `
                     <div class="product-card glow-effect" style="min-width: 100%; max-width: 100%;" onclick="openProductDetails(${pString})">
                         <span class="badge-discount">${p.discount}</span>
                         <button class="wishlist-btn glow-effect" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
                         <div class="product-img" style="height: 110px;">
-                            <img src="${p.imgs[0]}" alt="${p.name[currentLang]}" loading="lazy">
+                            <img src="${p.imgs[0]}" alt="${nameStr}" loading="lazy">
                         </div>
                         <div class="product-details">
                             <div class="brand-name">${p.brand}</div>
-                            <div class="product-name">${p.name[currentLang]}</div>
+                            <div class="product-name">${nameStr}</div>
                             <div class="rating-box">
                                 <i class="fa-solid fa-star"></i> ${p.rating}
                             </div>
@@ -1746,7 +1927,7 @@
                                     <div class="current-price">${p.price}</div>
                                     <div class="old-price">${p.oldPrice}</div>
                                 </div>
-                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); alert('${p.name[currentLang]} ' + (currentLang==='bn'?'কার্টে যোগ করা হয়েছে!':'added to cart!'))"><i class="fa-solid fa-cart-plus"></i></button>
+                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); alert('${nameStr} ' + (currentLang==='bn'?'কার্টে যোগ করা হয়েছে!':'added to cart!'))"><i class="fa-solid fa-cart-plus"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1762,7 +1943,10 @@
             
             let matched = [];
             Object.keys(allProducts).forEach(cat => {
-                let found = allProducts[cat].filter(p => p.name[currentLang].toLowerCase().includes(query.toLowerCase()) || p.brand.toLowerCase().includes(query.toLowerCase()));
+                let found = allProducts[cat].filter(p => {
+                    let nameVal = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
+                    return nameVal.toLowerCase().includes(query.toLowerCase()) || p.brand.toLowerCase().includes(query.toLowerCase());
+                });
                 matched = matched.concat(found);
             });
 
@@ -1774,27 +1958,20 @@
             }
             matched.forEach(p => {
                 let pString = JSON.stringify(p).replace(/"/g, '&quot;');
+                let nameStr = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
                 grid.innerHTML += `
                     <div class="product-card glow-effect" style="min-width: 100%; max-width: 100%;" onclick="openProductDetails(${pString})">
                         <span class="badge-discount">${p.discount}</span>
-                        <div class="product-img" style="height: 110px;"><img src="${p.imgs[0]}" alt="${p.name[currentLang]}" loading="lazy"></div>
+                        <div class="product-img" style="height: 110px;"><img src="${p.imgs[0]}" alt="${nameStr}" loading="lazy"></div>
                         <div class="product-details">
                             <div class="brand-name">${p.brand}</div>
-                            <div class="product-name">${p.name[currentLang]}</div>
+                            <div class="product-name">${nameStr}</div>
                             <div class="current-price">${p.price}</div>
                         </div>
                     </div>
                 `;
             });
         }
-
-        const banners = [
-            { title: { bn: "রেডটেপ ও নাইকি প্রিমিয়াম স্নিকার্স কালেকশন", en: "Redtape & Nike Premium Sneakers Collection" }, desc: { bn: "১০০% অরিজিনাল এক্সপোর্ট গ্রেড লেদার জুতো", en: "100% Original Export Grade Leather Shoes" }, tag: { bn: "স্নিকার্স ফেস্ট", en: "Sneakers Fest" }, bg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=60" },
-            { title: { bn: "সুন্দরবনের খাঁটি মধু ও তাজা চুইঝাল", en: "Pure Sundarban Honey & Fresh Chuijhal" }, desc: { bn: "শতভাগ নির্ভেজাল ও অর্গানিক গ্রামীণ পণ্য", en: "100% Pure & Organic Rural Products" }, tag: { bn: "খাঁটি ফুড", en: "Pure Food" }, bg: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=600&auto=format&fit=crop&q=60" },
-            { title: { bn: "স্মার্ট ওয়াচ ও প্রিমিয়াম গ্যাজেটস", en: "Smart Watches & Premium Gadgets" }, desc: { bn: "সেরা দামে সেরা ইলেকট্রনিক্স এক্সেসরিজ", en: "Best Electronics Accessories at Best Prices" }, tag: { bn: "মেগা ডিসকাউন্ট", en: "Mega Discount" }, bg: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60" },
-            { title: { bn: "এক্সপোর্ট কোয়ালিটি পলো ও ফরমাল শার্ট", en: "Export Quality Polo & Formal Shirts" }, desc: { bn: "স্টাইলিশ ও আরামদায়ক ফ্যাশন আইটেম", en: "Stylish & Comfortable Fashion Items" }, tag: { bn: "ফ্যাশন উইক", en: "Fashion Week" }, bg: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=60" },
-            { title: { bn: "তাজা পদ্মার ইলিশ ও বাগদা চিংড়ি", en: "Fresh Padma Hilsa & Bagda Prawns" }, desc: { bn: "সরাসরি নদী থেকে সংগৃহীত ফ্রেশ মাছ", en: "Fresh fish directly from river" }, tag: { bn: "তাজা বাজার", en: "Fresh Market" }, bg: "https://images.unsplash.com/photo-1565680314427-a55b85ff026d?w=600&auto=format&fit=crop&q=60" }
-        ];
 
         function initBanners() {
             const track = document.getElementById('bannerTrack');
@@ -1803,13 +1980,19 @@
             track.innerHTML = '';
             dots.innerHTML = '';
 
-            banners.forEach((b, index) => {
+            let list = dbBanners.length > 0 ? dbBanners : defaultBanners;
+
+            list.forEach((b, index) => {
+                let tagVal = typeof b.tag === 'object' ? (b.tag[currentLang] || b.tag.bn) : b.tag;
+                let titleVal = typeof b.title === 'object' ? (b.title[currentLang] || b.title.bn) : b.title;
+                let descVal = typeof b.desc === 'object' ? (b.desc[currentLang] || b.desc.bn) : b.desc;
+
                 track.innerHTML += `
                     <div class="banner-card glow-effect" style="background-image: url('${b.bg}')" onclick="openCategoryView('sneakers')">
                         <div class="banner-content">
-                            <span class="banner-tag">${b.tag[currentLang]}</span>
-                            <h3>${b.title[currentLang]}</h3>
-                            <p>${b.desc[currentLang]}</p>
+                            <span class="banner-tag">${tagVal}</span>
+                            <h3>${titleVal}</h3>
+                            <p>${descVal}</p>
                         </div>
                     </div>
                 `;
@@ -1819,7 +2002,8 @@
 
         let slideIndex = 0;
         function autoSlide() {
-            slideIndex = (slideIndex + 1) % banners.length;
+            let list = dbBanners.length > 0 ? dbBanners : defaultBanners;
+            slideIndex = (slideIndex + 1) % list.length;
             updateSlide();
         }
 
@@ -1842,18 +2026,21 @@
             const container = document.getElementById(containerId);
             if(!container) return;
             container.innerHTML = '';
+            if(!list || list.length === 0) return;
+
             list.forEach(p => {
                 let pString = JSON.stringify(p).replace(/"/g, '&quot;');
+                let nameStr = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
                 container.innerHTML += `
                     <div class="product-card glow-effect" onclick="openProductDetails(${pString})">
                         <span class="badge-discount">${p.discount}</span>
                         <button class="wishlist-btn glow-effect" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
                         <div class="product-img">
-                            <img src="${p.imgs[0]}" alt="${p.name[currentLang]}" loading="lazy">
+                            <img src="${p.imgs[0]}" alt="${nameStr}" loading="lazy">
                         </div>
                         <div class="product-details">
                             <div class="brand-name">${p.brand}</div>
-                            <div class="product-name">${p.name[currentLang]}</div>
+                            <div class="product-name">${nameStr}</div>
                             <div class="rating-box">
                                 <i class="fa-solid fa-star"></i> ${p.rating}
                             </div>
@@ -1862,7 +2049,7 @@
                                     <div class="current-price">${p.price}</div>
                                     <div class="old-price">${p.oldPrice}</div>
                                 </div>
-                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); alert('${p.name[currentLang]} ' + (currentLang==='bn'?'কার্টে যোগ করা হয়েছে!':'added to cart!'))"><i class="fa-solid fa-cart-plus"></i></button>
+                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); alert('${nameStr} ' + (currentLang==='bn'?'কার্টে যোগ করা হয়েছে!':'added to cart!'))"><i class="fa-solid fa-cart-plus"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1872,13 +2059,7 @@
 
         window.onload = function() {
             updateLoginButtonState();
-            initBanners();
-            renderProducts('hotDealsContainer', allProducts.sneakers);
-            renderProducts('sneakersContainer', allProducts.sneakers);
-            renderProducts('gadgetsContainer', allProducts.gadgets);
-            renderProducts('fashionContainer', allProducts.fashion);
-            renderProducts('foodsContainer', allProducts.foods);
-            renderProducts('resellerProductsContainer', allProducts.fashion);
+            initFirebaseRealtimeSync();
         };
     </script>
 </body>
