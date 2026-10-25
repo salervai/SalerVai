@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সেলারভাই | অ্যাডমিন প্যানেল</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK Compat Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ফায়ারবেজ কনফিগারেশন
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPyJ9-DJq0Hvq8k0Uf_wdz78GgKm9n_sw",
+            authDomain: "salervai.firebaseapp.com",
+            projectId: "salervai",
+            storageBucket: "salervai.firebasestorage.app",
+            messagingSenderId: "929355581127",
+            appId: "1:929355581127:web:a23ac5306301a092e020e2",
+            measurementId: "G-JLCHVWQ7WJ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        .container { max-width: 600px; width: 100%; margin: 0 auto; padding: 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+        /* Modern Beautiful Login Screen */
+        #loginScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0d6efd, #0043a8);
+            display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 15px;
+        }
+        .login-card {
+            background: white; width: 100%; max-width: 360px; padding: 30px 20px; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center;
+        }
+        .login-avatar {
+            width: 65px; height: 65px; background: #e7f1ff; color: var(--primary-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 15px auto;
+            border: 2px solid var(--primary-color);
+        }
+        .login-card h2 { font-size: 16px; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
+        .login-card p { font-size: 10px; color: var(--text-muted); margin-bottom: 20px; }
+        .login-input-group { position: relative; margin-bottom: 12px; text-align: left; }
+        .login-input-group i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px; }
+        .login-input-group input {
+            width: 100%; padding: 10px 12px 10px 35px; border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 12px; outline: none; background: #f8f9fa; transition: 0.2s;
+        }
+        .login-input-group input:focus { border-color: var(--primary-color); background: white; box-shadow: 0 0 0 3px rgba(13,110,253,0.1); }
+        .login-btn {
+            width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 8px;
+            font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; margin-top: 5px;
+        }
+        .login-btn:hover { background: #0b5ed7; }
+
+        /* Admin Dashboard Container (No Scrolling Layout) */
+        #adminDashboard { display: none; height: 100vh; flex-direction: column; justify-content: space-between; }
+        
+        .admin-header {
+            background: white; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .admin-header h1 { font-size: 13px; font-weight: 700; color: var(--primary-color); }
+
+        /* Dashboard Square Cards (Stats) */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 4px 0;
+        }
+        .stat-card {
+            background: white; padding: 8px 4px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color);
+        }
+        .stat-circle {
+            width: 32px; height: 32px; border-radius: 50%; background: #e7f1ff; color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin: 0 auto 3px auto; border: 1.5px solid var(--primary-color);
+        }
+        .stat-card h3 { font-size: 9px; color: var(--text-muted); font-weight: 600; }
+        .stat-card p { font-size: 11px; font-weight: 700; color: var(--text-color); }
+
+        /* Square Card Navigation / Menu Layout */
+        .square-menu-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin: 4px 0;
+        }
+        .square-menu-card {
+            background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 8px; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: 0.2s;
+        }
+        .square-menu-card:hover, .square-menu-card.active {
+            border-color: var(--primary-color); background: #f0f4ff;
+        }
+        .square-menu-card i { font-size: 16px; color: var(--primary-color); margin-bottom: 3px; display: block; }
+        .square-menu-card span { font-size: 11px; font-weight: 700; color: var(--text-color); }
+
+        /* Section Cards & Panels (Initially Hidden) */
+        .admin-card {
+            background: white; border-radius: 8px; padding: 10px; margin: 4px 0; border: 1px solid var(--border-color);
+            max-height: 38vh; overflow-y: auto; display: none;
+        }
+        .admin-card.active-panel { display: block; }
+        .admin-card h2 { font-size: 11px; font-weight: 700; margin-bottom: 6px; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Form Inputs */
+        .form-group { margin-bottom: 5px; }
+        .form-group label { font-size: 9px; font-weight: 600; display: block; margin-bottom: 1px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 10px; outline: none; background: #fafafa;
+        }
+        .form-group textarea { height: 35px; }
+
+        /* Live Preview Box */
+        .preview-box {
+            background: #f8f9fa; border: 1px dashed var(--primary-color); border-radius: 6px; padding: 6px; margin-top: 6px;
+        }
+        .preview-box h4 { font-size: 9px; color: var(--primary-color); margin-bottom: 2px; font-weight: 700; }
+
+        .btn-submit {
+            background: #28a745; color: white; border: none; padding: 6px 10px; border-radius: 5px; font-weight: 700; font-size: 10px; cursor: pointer; width: 100%; margin-top: 5px;
+        }
+        .btn-danger { background: #dc3545; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 600; }
+        .btn-warning { background: #ffc107; color: #000; border: none; padding: 3px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 700; }
+        .btn-primary-sm { background: var(--primary-color); color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 600; }
+
+        .admin-item-row {
+            display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border-color); font-size: 10px;
+        }
+
+        /* Confirmation Popup Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            display: none; justify-content: center; align-items: center; z-index: 4000; padding: 15px;
+        }
+        .modal-card {
+            background: white; width: 100%; max-width: 300px; padding: 15px; border-radius: 10px; text-align: center;
+        }
+        .modal-card h3 { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .modal-card p { font-size: 10px; color: var(--text-muted); margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. MODERN SECURE LOGIN SCREEN -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div class="login-avatar"><i class="fa-solid fa-shield-halved"></i></div>
+            <h2>অ্যাডমিন পোর্টাল</h2>
+            <p>নিরাপদ প্রবেশাধিকারের জন্য তথ্য দিন</p>
+            <div class="login-input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="adminUser" placeholder="ইউজারনেম লিখুন">
+            </div>
+            <div class="login-input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন">
+            </div>
+            <button class="login-btn" onclick="handleAdminLogin()">প্রবেশ করুন</button>
+        </div>
+    </div>
+
+    <!-- 2. ADMIN DASHBOARD (NO SCROLLING HOME LAYOUT) -->
+    <div id="adminDashboard" class="container">
+        
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>🛡️ সেলার ভাই - অ্যাডমিন প্যানেল</h1>
+            <button onclick="logoutAdmin()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</button>
+        </div>
+
+        <!-- Dashboard Square Cards (Stats) -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-circle" id="totalProdCount">০</div>
+                <h3>প্রডাক্ট</h3>
+            </div>
+            <div class="stat-card">
+                <div class="stat-circle" id="liveProdCount" style="background: #e1fef0; color: #28a745; border-color: #28a745;">০</div>
+                <h3>লাইভ</h3>
+            </div>
+            <div class="stat-card">
+                <div class="stat-circle" id="orderCount" style="background: #fff3cd; color: #ffc107; border-color: #ffc107;">০</div>
+                <h3>অর্ডার</h3>
+            </div>
+            <div class="stat-card">
+                <div class="stat-circle" id="userCount" style="background: #f8d7da; color: #dc3545; border-color: #dc3545;">১</div>
+                <h3>ইউজার</h3>
+            </div>
+        </div>
+
+        <!-- FIRST SQUARE CARDS CONTAINER: Product Management -->
+        <div class="square-menu-grid">
+            <div class="square-menu-card" id="menuAddProd" onclick="toggleSubPanel('panelAddProduct')">
+                <i class="fa-solid fa-square-plus"></i>
+                <span>নতুন পণ্য যোগ</span>
+            </div>
+            <div class="square-menu-card" id="menuCustProd" onclick="toggleSubPanel('panelCustomizeProduct')">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <span>পণ্য কাস্টমাইজ</span>
+            </div>
+        </div>
+
+        <!-- PANEL 1: নতুন পণ্য যোগ (With Live Preview) -->
+        <div class="admin-card" id="panelAddProduct">
+            <h2>➕ নতুন পণ্য যোগ করুন <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
+            <div class="form-group">
+                <label>পণ্যের টাইটেল (বাংলা):</label>
+                <input type="text" id="newTitleBn" placeholder="যেমন: প্রিমিয়াম লেদার জুতো" oninput="updateProductPreview()">
+            </div>
+            <div class="form-group">
+                <label>পণ্যের বিবরণ (Description):</label>
+                <textarea id="newDesc" placeholder="পণ্যের বিস্তারিত বিবরণ..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>ছবির লিংক (Image URL):</label>
+                <input type="text" id="newImg" placeholder="https://..." oninput="updateProductPreview()">
+            </div>
+            <div class="form-group">
+                <label>নির্দিষ্ট ক্যাটাগরি:</label>
+                <select id="newCategory">
+                    <option value="sneakers">স্নেকার্স (Sneakers)</option>
+                    <option value="gadgets">গ্যাজেটস (Gadgets)</option>
+                    <option value="fashion">ফ্যাশন (Fashion)</option>
+                    <option value="foods">ফুডস (Foods)</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 4px;">
+                <div class="form-group" style="flex:1;">
+                    <label>বর্তমান দাম:</label>
+                    <input type="text" id="newPrice" placeholder="৳ ২৮৫০" oninput="updateProductPreview()">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>পূর্বের মূল্য:</label>
+                    <input type="text" id="newOldPrice" placeholder="৳ ৩৬০০">
+                </div>
+            </div>
+            <div style="display: flex; gap: 4px;">
+                <div class="form-group" style="flex:1;">
+                    <label>ডিসকাউন্ট (%):</label>
+                    <input type="text" id="newDisc" placeholder="-21%">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>এভেইলেবল সাইজ:</label>
+                    <input type="text" id="newSize" placeholder="40, 41, 42, 43">
+                </div>
+            </div>
+
+            <!-- Live Preview Area -->
+            <div class="preview-box">
+                <h4>👁️ পণ্যের লাইভ প্রিভিউ:</h4>
+                <div id="productPreviewContent" style="font-size: 10px;">টাইটেল বা দাম লিখলে এখানে প্রিভিউ দেখা যাবে...</div>
+            </div>
+
+            <button onclick="addNewProductToFirebase()" class="btn-submit">🚀 সার্ভারে আপডেট করুন</button>
+        </div>
+
+        <!-- PANEL 2: পণ্য কাস্টমাইজ (Edit, Show/Hide, Delete with Confirmation) -->
+        <div class="admin-card" id="panelCustomizeProduct">
+            <h2>⚙️ পণ্য কাস্টমাইজ ও স্টক কন্ট্রোল <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
+            <div id="adminProductList">
+                <p style="font-size: 10px; color: var(--text-muted);">ডাটা লোড হচ্ছে...</p>
+            </div>
+        </div>
+
+        <!-- SECOND SQUARE CARDS CONTAINER: Configuration & Banners -->
+        <div class="square-menu-grid">
+            <div class="square-menu-card" id="menuConfig" onclick="toggleSubPanel('panelConfiguration')">
+                <i class="fa-solid fa-gears"></i>
+                <span>কনফিগারেশন</span>
+            </div>
+            <div class="square-menu-card" id="menuBanners" onclick="toggleSubPanel('panelBannerControl')">
+                <i class="fa-solid fa-images"></i>
+                <span>ব্যানার কন্ট্রোল</span>
+            </div>
+        </div>
+
+        <!-- PANEL 3: কনফিগারেশন (Site settings & Shortcut Menus Edit & Save) -->
+        <div class="admin-card" id="panelConfiguration">
+            <h2>🛠️ কনফিগারেশন ও শর্টকাট মেনু <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
+            <div class="form-group">
+                <label>সাইটের নাম:</label>
+                <input type="text" id="confSiteName" value="সেলার ভাই">
+            </div>
+            <div class="form-group">
+                <label>ট্যাগলাইন:</label>
+                <input type="text" id="confTagline" value="আসল পণ্য, আস্থার ঠিকানা">
+            </div>
+            <div class="form-group">
+                <label>ফোন কল নাম্বার:</label>
+                <input type="text" id="confPhone" value="01567856878">
+            </div>
+            
+            <h3 style="font-size: 10px; font-weight: 700; color: var(--primary-color); margin: 6px 0 3px 0;">🔗 শর্টকাট মেনু কন্ট্রোল (আইকন ও নাম):</h3>
+            <div id="adminShortcutList">
+                <!-- Loaded dynamically -->
+            </div>
+
+            <button onclick="saveSiteConfig()" class="btn-submit" style="background: var(--primary-color);">💾 কনফিগারেশন সেভ করুন</button>
+        </div>
+
+        <!-- PANEL 4: ব্যানার কন্ট্রোল (নতুন ব্যানার যোগ, লাইভ প্রিভিউ, ব্যানার কাস্টমাইজ ও হাইড/শো) -->
+        <div class="admin-card" id="panelBannerControl">
+            <h2>🎨 ব্যানার কন্ট্রোল ও ম্যানেজমেন্ট <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
+            
+            <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                <h3 style="font-size: 10px; font-weight: 700; color: var(--primary-color); margin-bottom: 4px;">➕ নতুন ব্যানার যোগ করুন</h3>
+                <div class="form-group">
+                    <label>ব্যানার ট্যাগ:</label>
+                    <input type="text" id="bannerTag" placeholder="ট্যাগ লিখুন" oninput="updateBannerPreview()">
+                </div>
+                <div class="form-group">
+                    <label>ব্যানার টাইটেল:</label>
+                    <input type="text" id="bannerTitle" placeholder="টাইটেল লিখুন" oninput="updateBannerPreview()">
+                </div>
+                <div class="form-group">
+                    <label>ছবির ব্যাকগ্রাউন্ড লিংক (Image URL):</label>
+                    <input type="text" id="bannerBg" placeholder="https://..." oninput="updateBannerPreview()">
+                </div>
+                <div class="form-group">
+                    <label>টার্গেটেড লিংক:</label>
+                    <input type="text" id="bannerTarget" placeholder="sneakers">
+                </div>
+
+                <!-- Banner Live Preview -->
+                <div class="preview-box">
+                    <h4>👁️ লাইভ প্রিভিউ:</h4>
+                    <div id="bannerPreviewContainer" style="height: 60px; border-radius: 4px; background-size: cover; background-position: center; color: white; padding: 6px; display: flex; flex-direction: column; justify-content: flex-end; background-color: #333;">
+                        <span id="prevTag" style="background:#ffc107; color:#000; font-size:7px; font-weight:700; padding:1px 3px; border-radius:2px; display:inline-block; width:fit-content; margin-bottom:1px;">ট্যাগ</span>
+                        <h4 id="prevTitle" style="font-size:10px; font-weight:700; margin:0;">ব্যানার টাইটেল</h4>
+                    </div>
+                </div>
+
+                <button onclick="addNewBannerToFirebase()" class="btn-submit" style="background: #17a2b8;">✨ ব্যানার সার্ভারে সেভ করুন</button>
+            </div>
+
+            <h3 style="font-size: 10px; font-weight: 700; margin: 6px 0 4px 0; color: var(--primary-color);">📋 ব্যানার কাস্টমাইজ ও হাইড/শো</h3>
+            <div id="adminBannerList">
+                <p style="font-size: 10px; color: var(--text-muted);">ব্যানার লোড হচ্ছে...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DELETE CONFIRMATION POPUP MODAL -->
+    <div class="modal-overlay" id="deleteConfirmModal">
+        <div class="modal-card">
+            <h3>⚠️ নিশ্চিতকরণ</h3>
+            <p>আপনি কি সত্যি এই পণ্যটি মুছে ফেলতে চান?</p>
+            <div style="display: flex; gap: 6px;">
+                <button class="btn-danger" style="flex:1; padding: 6px;" onclick="executeDeleteProduct()">হ্যাঁ, ডিলিট করুন</button>
+                <button class="btn-warning" style="flex:1; padding: 6px;" onclick="closeDeleteModal()">বাতিল</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let productToDeleteId = null;
+
+        // 1. Admin Login Control
+        function handleAdminLogin() {
+            let user = document.getElementById('adminUser').value.trim();
+            let pass = document.getElementById('adminPass').value.trim();
+
+            if(user === "SVADMIN" && pass === "SVADMIN") {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'flex';
+                loadAdminData();
+            } else {
+                alert("❌ ভুল ইউজারনেম অথবা পাসওয়ার্ড!");
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
+        // Toggle Sub-panels (Click only opens, initially all closed)
+        function toggleSubPanel(panelId) {
+            let panels = ['panelAddProduct', 'panelCustomizeProduct', 'panelConfiguration', 'panelBannerControl'];
+            let menus = {
+                'panelAddProduct': 'menuAddProd',
+                'panelCustomizeProduct': 'menuCustProd',
+                'panelConfiguration': 'menuConfig',
+                'panelBannerControl': 'menuBanners'
+            };
+
+            panels.forEach(id => {
+                let p = document.getElementById(id);
+                let m = document.getElementById(menus[id]);
+                if(id === panelId) {
+                    let isOpen = p.classList.contains('active-panel');
+                    if(isOpen) {
+                        p.classList.remove('active-panel');
+                        m.classList.remove('active');
+                    } else {
+                        p.classList.add('active-panel');
+                        m.classList.add('active');
+                    }
+                } else {
+                    p.classList.remove('active-panel');
+                    m.classList.remove('active');
+                }
+            });
+        }
+
+        function closeAllPanels() {
+            let panels = ['panelAddProduct', 'panelCustomizeProduct', 'panelConfiguration', 'panelBannerControl'];
+            let menus = ['menuAddProd', 'menuCustProd', 'menuConfig', 'menuBanners'];
+            panels.forEach(id => document.getElementById(id).classList.remove('active-panel'));
+            menus.forEach(id => document.getElementById(id).classList.remove('active'));
+        }
+
+        // 2. Load Dashboard Stats & Server Data
+        async function loadAdminData() {
+            try {
+                // Products Data
+                let prodSnapshot = await db.collection("products").get();
+                let totalProducts = prodSnapshot.size;
+                document.getElementById('totalProdCount').innerText = totalProducts;
+                document.getElementById('liveProdCount').innerText = totalProducts;
+
+                let prodListContainer = document.getElementById('adminProductList');
+                prodListContainer.innerHTML = '';
+                
+                prodSnapshot.forEach(doc => {
+                    let p = doc.data();
+                    let pId = doc.id;
+                    let title = p.name ? (p.name.bn || p.name) : 'প্রডাক্ট';
+                    let isHidden = p.hidden || false;
+                    
+                    prodListContainer.innerHTML += `
+                        <div class="admin-item-row" id="prod-row-${pId}">
+                            <div><b>${title}</b><br><span style="color:var(--text-muted);">${p.price || '৳০'}</span></div>
+                            <div style="display:flex; gap:3px;">
+                                <button class="btn-warning" onclick="toggleProductVisibility('${pId}', ${isHidden})">${isHidden ? 'শো' : 'হাইড'}</button>
+                                <button class="btn-danger" onclick="openDeleteModal('${pId}')">ডিলিট</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Orders Count
+                let orderSnapshot = await db.collection("orders").get();
+                document.getElementById('orderCount').innerText = orderSnapshot.size;
+
+                // Banners & Config Data
+                loadAdminBanners();
+                loadAdminShortcuts();
+
+            } catch (error) {
+                console.error("ডাটা লোড করতে সমস্যা:", error);
+            }
+        }
+
+        // 3. Product Management
+        function updateProductPreview() {
+            let title = document.getElementById('newTitleBn').value || 'পণ্যের নাম';
+            let price = document.getElementById('newPrice').value || '৳ ০';
+            let img = document.getElementById('newImg').value || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100';
+
+            document.getElementById('productPreviewContent').innerHTML = `
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <img src="${img}" style="width:30px; height:30px; object-fit:cover; border-radius:3px;">
+                    <div><b>${title}</b> - <span style="color:var(--primary-color);">${price}</span></div>
+                </div>
+            `;
+        }
+
+        async function addNewProductToFirebase() {
+            let titleBn = document.getElementById('newTitleBn').value;
+            let desc = document.getElementById('newDesc').value;
+            let img = document.getElementById('newImg').value;
+            let category = document.getElementById('newCategory').value;
+            let price = document.getElementById('newPrice').value;
+            let oldPrice = document.getElementById('newOldPrice').value;
+            let discount = document.getElementById('newDisc').value;
+            let size = document.getElementById('newSize').value;
+
+            if(!titleBn || !price || !img) {
+                alert("দয়া করে নাম, দাম এবং ছবির লিংক দিন।");
+                return;
+            }
+
+            try {
+                await db.collection("products").add({
+                    category: category,
+                    brand: "SALERVAI",
+                    name: { bn: titleBn, en: titleBn },
+                    sub: "General",
+                    price: price,
+                    oldPrice: oldPrice,
+                    numericPrice: parseInt(price.replace(/[^0-9]/g, '')) || 0,
+                    discount: discount || "-10%",
+                    imgs: [img],
+                    hidden: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("✅ পণ্য সফলভাবে সার্ভারে যুক্ত হয়েছে!");
+                loadAdminData();
+                closeAllPanels();
+            } catch (error) {
+                alert("প্রডাক্ট যোগ করতে সমস্যা হয়েছে.");
+            }
+        }
+
+        function openDeleteModal(id) {
+            productToDeleteId = id;
+            document.getElementById('deleteConfirmModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            productToDeleteId = null;
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        }
+
+        async function executeDeleteProduct() {
+            if(!productToDeleteId) return;
+            try {
+                await db.collection("products").doc(productToDeleteId).delete();
+                closeDeleteModal();
+                loadAdminData();
+            } catch (error) {
+                alert("ডিলিট করতে সমস্যা হয়েছে।");
+            }
+        }
+
+        async function toggleProductVisibility(id, currentHidden) {
+            try {
+                await db.collection("products").doc(id).update({ hidden: !currentHidden });
+                loadAdminData();
+            } catch (error) {
+                alert("স্ট্যাটাস পরিবর্তন করতে সমস্যা হয়েছে।");
+            }
+        }
+
+        // 4. Banner Management
+        function updateBannerPreview() {
+            let tag = document.getElementById('bannerTag').value || 'ট্যাগ';
+            let title = document.getElementById('bannerTitle').value || 'ব্যানার টাইটেল';
+            let bg = document.getElementById('bannerBg').value;
+
+            document.getElementById('prevTag').innerText = tag;
+            document.getElementById('prevTitle').innerText = title;
+            if(bg) document.getElementById('bannerPreviewContainer').style.backgroundImage = `url('${bg}')`;
+        }
+
+        async function addNewBannerToFirebase() {
+            let tag = document.getElementById('bannerTag').value;
+            let title = document.getElementById('bannerTitle').value;
+            let bg = document.getElementById('bannerBg').value;
+            let target = document.getElementById('bannerTarget').value;
+
+            if(!title || !bg) {
+                alert("টাইটেল এবং ব্যাকগ্রাউন্ড লিংক দিন।");
+                return;
+            }
+
+            try {
+                await db.collection("banners").add({
+                    tag: { bn: tag, en: tag },
+                    title: { bn: title, en: title },
+                    bg: bg,
+                    target: target || 'sneakers',
+                    status: 'show',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("✅ ব্যানার সেভ হয়েছে!");
+                loadAdminBanners();
+            } catch (error) {
+                alert("ব্যানার সেভ করতে সমস্যা হয়েছে।");
+            }
+        }
+
+        async function loadAdminBanners() {
+            let bannerContainer = document.getElementById('adminBannerList');
+            bannerContainer.innerHTML = '';
+            try {
+                let snap = await db.collection("banners").get();
+                snap.forEach(doc => {
+                    let b = doc.data();
+                    let bId = doc.id;
+                    let titleStr = b.title ? (b.title.bn || b.title) : 'ব্যানার';
+                    let status = b.status || 'show';
+
+                    bannerContainer.innerHTML += `
+                        <div class="admin-item-row">
+                            <div><b>${titleStr}</b></div>
+                            <div style="display:flex; gap:3px;">
+                                <button class="btn-warning" onclick="toggleBannerStatus('${bId}', '${status}')">${status === 'hide' ? 'শো' : 'হাইড'}</button>
+                                <button class="btn-danger" onclick="deleteBanner('${bId}')">ডিলিট</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) { console.error(error); }
+        }
+
+        async function toggleBannerStatus(id, currentStatus) {
+            let newStatus = currentStatus === 'hide' ? 'show' : 'hide';
+            await db.collection("banners").doc(id).update({ status: newStatus });
+            loadAdminBanners();
+        }
+
+        async function deleteBanner(id) {
+            await db.collection("banners").doc(id).delete();
+            loadAdminBanners();
+        }
+
+        // 5. Configuration & Shortcut Menus Edit & Save
+        async function loadAdminShortcuts() {
+            let list = document.getElementById('adminShortcutList');
+            list.innerHTML = '';
+            
+            try {
+                let doc = await db.collection("settings").doc("shortcuts").get();
+                let shortcuts = doc.exists ? doc.data().items : [
+                    {key: 'sneakers', name: 'স্নেকার্স', icon: 'https://img.icons8.com/fluency/96/sneakers.png'},
+                    {key: 'gadgets', name: 'গ্যাজেটস', icon: 'https://img.icons8.com/fluency/96/smart-watch.png'},
+                    {key: 'fashion', name: 'ফ্যাশন', icon: 'https://img.icons8.com/fluency/96/polo-shirt.png'},
+                    {key: 'foods', name: 'ফুডস', icon: 'https://img.icons8.com/fluency/96/honey.png'}
+                ];
+
+                shortcuts.forEach((sc, idx) => {
+                    list.innerHTML += `
+                        <div style="background:#fafafa; border:1px solid var(--border-color); padding:4px; border-radius:4px; margin-bottom:4px;" id="shortcut-row-${idx}">
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:10px;">
+                                <span><b>${sc.name}</b></span>
+                                <button class="btn-primary-sm" onclick="enableShortcutEdit(${idx})">এডিট</button>
+                            </div>
+                            <div id="shortcut-edit-${idx}" style="display:none; margin-top:4px;">
+                                <input type="text" id="sc-name-${idx}" value="${sc.name}" placeholder="নাম" style="margin-bottom:2px; font-size:9px; padding:3px;">
+                                <input type="text" id="sc-icon-${idx}" value="${sc.icon}" placeholder="আইকন লিংক" style="margin-bottom:2px; font-size:9px; padding:3px;">
+                                <button class="btn-submit" style="margin-top:2px; padding:3px;" onclick="saveSingleShortcut(${idx}, '${sc.key}')">সেভ করুন</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        function enableShortcutEdit(idx) {
+            let editBox = document.getElementById(`shortcut-edit-${idx}`);
+            editBox.style.display = editBox.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function saveSingleShortcut(idx, key) {
+            let newName = document.getElementById(`sc-name-${idx}`).value;
+            let newIcon = document.getElementById(`sc-icon-${idx}`).value;
+
+            try {
+                let docRef = db.collection("settings").doc("shortcuts");
+                let doc = await docRef.get();
+                let items = doc.exists ? doc.data().items : [];
+                
+                let target = items.find(i => i.key === key);
+                if(target) {
+                    target.name = newName;
+                    target.icon = newIcon;
+                } else {
+                    items.push({key, name: newName, icon: newIcon});
+                }
+
+                await docRef.set({ items });
+                alert("✅ শর্টকাট মেনু সার্ভারে আপডেট হয়েছে!");
+                loadAdminShortcuts();
+            } catch (e) { alert("সেভ করতে সমস্যা হয়েছে।"); }
+        }
+
+        async function saveSiteConfig() {
+            let siteName = document.getElementById('confSiteName').value;
+            let tagline = document.getElementById('confTagline').value;
+            let phone = document.getElementById('confPhone').value;
+
+            try {
+                await db.collection("settings").doc("site_config").set({
+                    siteName, tagline, phone, updatedAt: new Date()
+                }, { merge: true });
+
+                alert("✅ কনফিগারেশন সফলভাবে সেভ হয়েছে!");
+                closeAllPanels();
+            } catch (error) {
+                alert("সেভ করতে সমস্যা হয়েছে।");
+            }
+        }
+    </script>
+</body>
+</html>
