@@ -72,6 +72,32 @@
             border-color: var(--primary-color) !important;
         }
 
+        /* Custom Toast Notification */
+        #customToast {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #212529;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #customToast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         /* Header */
         header {
             background: #ffffff;
@@ -202,9 +228,11 @@
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            cursor: pointer;
+            cursor: grab;
             touch-action: pan-y;
+            user-select: none;
         }
+        .banner-slider-container:active { cursor: grabbing; }
 
         .banner-track {
             display: flex;
@@ -233,32 +261,10 @@
             border-radius: 10px;
         }
 
-        .banner-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .banner-tag {
-            background: #ffc107;
-            color: #000;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 4px;
-        }
-
-        .banner-card h3 {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 1px;
-        }
-
-        .banner-card p {
-            font-size: 10px;
-            opacity: 0.9;
-        }
+        .banner-content { position: relative; z-index: 2; }
+        .banner-tag { background: #ffc107; color: #000; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+        .banner-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 1px; }
+        .banner-card p { font-size: 10px; opacity: 0.9; }
 
         .banner-dots {
             display: flex;
@@ -266,21 +272,10 @@
             gap: 4px;
             margin-top: 6px;
         }
-
         .dot {
-            width: 5px;
-            height: 5px;
-            background: #ccc;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: 0.3s;
+            width: 5px; height: 5px; background: #ccc; border-radius: 50%; cursor: pointer; transition: 0.3s;
         }
-
-        .dot.active {
-            background: var(--primary-color);
-            width: 14px;
-            border-radius: 3px;
-        }
+        .dot.active { background: var(--primary-color); width: 14px; border-radius: 3px; }
 
         /* Shortcut Categories */
         .shortcut-grid {
@@ -326,276 +321,88 @@
 
         /* Submenu Bar */
         .submenu-bar {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding: 4px 0 10px 0;
-            scrollbar-width: none;
-            margin-bottom: 8px;
+            display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 10px 0; scrollbar-width: none; margin-bottom: 8px;
         }
-
         .submenu-bar::-webkit-scrollbar { display: none; }
-
         .sub-chip {
-            background: white;
-            border: 1px solid var(--border-color);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
+            background: white; border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: 500; cursor: pointer; white-space: nowrap;
         }
-
-        .sub-chip:hover, .sub-chip.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
+        .sub-chip:hover, .sub-chip.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
         /* Section Header */
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 12px 0 6px 0;
+            display: flex; justify-content: space-between; align-items: center; margin: 12px 0 6px 0;
         }
-
         .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--text-color);
+            font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 5px; color: var(--text-color);
         }
-
         .section-title i { color: #dc3545; }
-
-        .see-all {
-            font-size: 11px;
-            color: var(--primary-color);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
+        .see-all { font-size: 11px; color: var(--primary-color); font-weight: 600; text-decoration: none; cursor: pointer; }
 
         /* Product Carousel */
         .product-carousel {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; scrollbar-width: none;
         }
-
         .product-carousel::-webkit-scrollbar { display: none; }
 
         .product-card {
-            min-width: calc(50% - 4px);
-            max-width: calc(50% - 4px);
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            scroll-snap-align: start;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            flex-shrink: 0;
+            min-width: calc(50% - 4px); max-width: calc(50% - 4px); background: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.03); position: relative; display: flex; flex-direction: column; scroll-snap-align: start; border: 1px solid var(--border-color); cursor: pointer; flex-shrink: 0;
         }
 
         @media (min-width: 768px) {
-            .product-card {
-                min-width: calc(33.333% - 6px);
-                max-width: calc(33.333% - 6px);
-            }
+            .product-card { min-width: calc(33.333% - 6px); max-width: calc(33.333% - 6px); }
         }
-
         @media (min-width: 1024px) {
-            .product-card {
-                min-width: calc(16.666% - 7px);
-                max-width: calc(16.666% - 7px);
-            }
+            .product-card { min-width: calc(16.666% - 7px); max-width: calc(16.666% - 7px); }
         }
 
-        .badge-discount {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: #dc3545;
-            color: white;
-            font-size: 8px;
-            font-weight: 700;
-            padding: 2px 4px;
-            border-radius: 3px;
-            z-index: 10;
-        }
-
-        .wishlist-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: white;
-            border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #dc3545;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 95px;
-            background: #fff;
-            position: relative;
-        }
-
-        .product-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-details {
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .brand-name {
-            font-size: 9px;
-            color: var(--text-muted);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 1px;
-        }
-
-        .product-name {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .rating-box {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            font-size: 9px;
-            color: #ffc107;
-            margin-bottom: 3px;
-        }
-
+        .badge-discount { position: absolute; top: 5px; left: 5px; background: #dc3545; color: white; font-size: 8px; font-weight: 700; padding: 2px 4px; border-radius: 3px; z-index: 10; }
+        .wishlist-btn { position: absolute; top: 5px; right: 5px; background: white; border: none; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #dc3545; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 10; }
+        .product-img { width: 100%; height: 95px; background: #fff; position: relative; }
+        .product-img img { width: 100%; height: 100%; object-fit: cover; }
+        .product-details { padding: 6px; display: flex; flex-direction: column; flex: 1; }
+        .brand-name { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 1px; }
+        .product-name { font-size: 11px; font-weight: 600; color: var(--text-color); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rating-box { display: flex; align-items: center; gap: 2px; font-size: 9px; color: #ffc107; margin-bottom: 3px; }
         .rating-box span { color: var(--text-muted); font-size: 8px; }
-
-        .price-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: auto;
-        }
-
-        .current-price {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-color);
-        }
-
-        .old-price {
-            font-size: 9px;
-            color: #dc3545;
-            text-decoration: line-through;
-        }
-
-        .add-cart-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            cursor: pointer;
-        }
+        .price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .current-price { font-size: 11px; font-weight: 700; color: var(--text-color); }
+        .old-price { font-size: 9px; color: #dc3545; text-decoration: line-through; }
+        .add-cart-btn { background: var(--primary-color); color: white; border: none; width: 24px; height: 24px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; }
 
         /* Global Footer */
-        .global-footer-wrapper {
-            margin-top: 15px;
-        }
-
+        .global-footer-wrapper { margin-top: 15px; }
+        
         .support-container {
-            background: white;
-            margin-bottom: 8px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
+            background: white; margin-bottom: 8px; padding: 10px; border-radius: 10px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .support-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-color);
-            font-size: 10px;
-            font-weight: 600;
-            gap: 3px;
-            cursor: pointer;
+        .support-square-card {
+            background: #f8f9fa; border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 8px 4px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            text-decoration: none; color: var(--text-color); font-size: 10px; font-weight: 600; gap: 4px; cursor: pointer;
         }
-
-        .support-item i { font-size: 16px; }
-        .support-item.chat i { color: #0d6efd; }
-        .support-item.wa i { color: #25d366; }
-        .support-item.messenger i { color: #28a745; }
+        .support-square-card i { font-size: 16px; }
+        .support-square-card.chat i { color: #0d6efd; }
+        .support-square-card.wa i { color: #25d366; }
+        .support-square-card.messenger i { color: #0084ff; }
+        .support-square-card.call i { color: #28a745; }
 
         .copyright-container {
-            background: #ffffff;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: #ffffff; padding: 10px 12px; border-radius: 10px;
+            text-align: center; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
         }
-
-        .copyright-text {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            font-size: 15px;
-        }
-
-        .social-links a { color: var(--text-color); }
+        .copyright-text { font-size: 10px; color: var(--text-muted); line-height: 1.3; }
+        .social-links { display: flex; justify-content: center; gap: 14px; font-size: 18px; }
+        .social-links a { color: var(--text-color); transition: 0.2s; }
         .social-links a.fb:hover { color: #0866ff; }
         .social-links a.msg:hover { color: #0084ff; }
         .social-links a.web:hover { color: #0d6efd; }
         .social-links a.wa:hover { color: #25d366; }
+        .social-links a.tg:hover { color: #0088cc; }
 
         /* Dynamic Pages */
         .page-view { display: none; }
@@ -603,261 +410,131 @@
 
         /* Product Details Page Styles */
         .details-container-1, .details-container-2, .details-container-3 {
-            background: white;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: white; border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .details-img-carousel {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            margin-bottom: 10px;
+        .details-slider-wrapper {
+            position: relative; width: 100%; height: 180px; border-radius: 8px; overflow: hidden; background: #f8f9fa; margin-bottom: 8px; cursor: grab; user-select: none;
         }
-        .details-img-carousel::-webkit-scrollbar { display: none; }
+        .details-slider-wrapper:active { cursor: grabbing; }
+        .details-slider-track {
+            display: flex; height: 100%; transition: transform 0.3s ease-in-out;
+        }
+        .details-slide-item {
+            min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        .details-slide-item img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .details-slider-dots {
+            display: flex; justify-content: center; gap: 4px; margin-bottom: 8px;
+        }
+        .d-dot {
+            width: 5px; height: 5px; background: #ccc; border-radius: 50%; cursor: pointer; transition: 0.3s;
+        }
+        .d-dot.active { background: var(--primary-color); width: 12px; border-radius: 3px; }
 
-        .details-img-item {
-            min-width: 100%;
-            height: 150px;
-            border-radius: 8px;
-            overflow: hidden;
-            scroll-snap-align: start;
-            background: #eee;
-        }
-        .details-img-item img { width: 100%; height: 100%; object-fit: cover; }
+        .selectors-row { display: flex; gap: 12px; margin: 8px 0; }
+        .selector-group { flex: 1; }
+        .size-selector, .color-selector { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+        .size-box, .color-box { border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: 600; }
+        .size-box.active, .color-box.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .selectors-row {
-            display: flex;
-            gap: 12px;
-            margin: 8px 0;
-        }
-
-        .selector-group {
-            flex: 1;
-        }
-
-        .size-selector, .color-selector {
-            display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap;
-        }
-        .size-box, .color-box {
-            border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 5px; font-size: 10px; cursor: pointer;
-        }
-        .size-box.active, .color-box.active {
-            background: var(--primary-color); color: white; border-color: var(--primary-color);
-        }
-
-        .action-row-buttons {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .btn-order-main {
-            flex: 1; background: #ffc107; color: #000; border: none; padding: 9px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; text-align: center;
-        }
-        .btn-cart-save {
-            flex: 1; background: var(--primary-color); color: #fff; border: none; padding: 9px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; text-align: center;
-        }
+        .action-row-buttons { display: flex; gap: 8px; margin-top: 12px; }
+        .btn-order-main { flex: 1; background: #ffc107; color: #000; border: none; padding: 9px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; text-align: center; }
+        .btn-cart-save { flex: 1; background: var(--primary-color); color: #fff; border: none; padding: 9px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; text-align: center; }
 
         .order-direct-box {
-            background: #f8f9fa;
-            border: 1px dashed var(--primary-color);
-            border-radius: 8px;
-            padding: 8px;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            background: #f8f9fa; border: 1px dashed var(--primary-color); border-radius: 8px; padding: 8px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between;
         }
-        .order-direct-box span {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .order-direct-box span { font-size: 11px; font-weight: 700; color: var(--primary-color); display: flex; align-items: center; gap: 4px; }
         .order-social-icons { display: flex; gap: 5px; }
-        .order-social-icon {
-            width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; text-decoration: none;
-        }
+        .order-social-icon { width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; text-decoration: none; }
         .os-wa { background: #25d366; }
         .os-msg { background: #0084ff; }
         .os-fb { background: #0866ff; }
         .os-call { background: #28a745; }
 
-        .spec-row {
-            display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 11px;
-        }
+        .spec-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 11px; }
         .spec-row:last-child { border-bottom: none; }
         .spec-label { color: var(--text-muted); font-weight: 600; }
         .spec-val { font-weight: 700; color: var(--text-color); }
 
         .collapse-btn {
-            width: 100%;
-            background: #f8f9fa;
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            margin-bottom: 8px;
+            width: 100%; background: #f8f9fa; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; color: var(--primary-color); display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 8px;
         }
-        .collapse-content {
-            display: none;
-            padding: 8px 4px;
-            border-top: 1px dashed var(--border-color);
-            margin-bottom: 8px;
-        }
+        .collapse-content { display: none; padding: 8px 4px; border-top: 1px dashed var(--border-color); margin-bottom: 8px; }
         .collapse-content.open { display: block; }
 
-        .review-card {
-            background: var(--bg-color);
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 8px;
-            border: 1px solid var(--border-color);
-        }
-        .review-header {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
-        }
-        .review-avatar {
-            width: 30px; height: 30px; border-radius: 50%; object-fit: cover;
-        }
+        .review-card { background: var(--bg-color); border-radius: 8px; padding: 8px; margin-bottom: 8px; border: 1px solid var(--border-color); }
+        .review-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .review-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
         .review-user-info h4 { font-size: 11px; font-weight: 700; }
         .review-user-info span { font-size: 9px; color: var(--text-muted); }
         .review-text-short { font-size: 10px; color: var(--text-color); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .review-img { width: 50px; height: 50px; border-radius: 4px; object-fit: cover; margin-top: 4px; cursor: pointer; }
 
         /* Modals */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px;
         }
         .modal-container {
             background: white; width: 100%; max-width: 400px; border-radius: 16px; padding: 22px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 15px 30px rgba(0,0,0,0.15); animation: scaleIn 0.3s ease;
         }
+        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        @keyframes scaleIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        /* Modern Auth Form Styles */
-        .auth-brand-header {
-            text-align: center;
-            margin-bottom: 18px;
-        }
-        .auth-brand-logo {
-            width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); margin: 0 auto 6px auto;
-        }
-        .auth-brand-header h3 {
-            font-size: 16px; font-weight: 700; color: var(--text-color);
-        }
-        .auth-brand-header p {
-            font-size: 11px; color: var(--text-muted);
-        }
-
-        .auth-input-group {
-            position: relative;
-            margin-bottom: 12px;
-        }
-        .auth-input-group i {
-            position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px;
-        }
-        .auth-input-group input {
-            width: 100%; padding: 10px 12px 10px 36px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; outline: none; background: #f8f9fa; transition: 0.2s;
-        }
-        .auth-input-group input:focus {
-            border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
-        }
-
-        .auth-main-btn {
-            width: 100%; background: var(--primary-color); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3); transition: 0.2s;
-        }
-        .auth-main-btn:hover { background: #0b5ed7; }
+        /* Auth & Forms */
+        .auth-brand-header { text-align: center; margin-bottom: 18px; }
+        .auth-brand-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); margin: 0 auto 6px auto; }
+        .auth-brand-header h3 { font-size: 16px; font-weight: 700; color: var(--text-color); }
+        .auth-brand-header p { font-size: 11px; color: var(--text-muted); }
+        .auth-input-group { position: relative; margin-bottom: 12px; }
+        .auth-input-group i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
+        .auth-input-group input { width: 100%; padding: 10px 12px 10px 36px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 12px; outline: none; background: #f8f9fa; }
+        .auth-main-btn { width: 100%; background: var(--primary-color); color: white; border: none; padding: 11px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.3); }
         .auth-main-btn.btn-success { background: #28a745; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
-        .auth-main-btn.btn-success:hover { background: #218838; }
+        .auth-footer-link { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 14px; }
+        .auth-footer-link span { color: var(--primary-color); font-weight: 700; cursor: pointer; text-decoration: underline; }
 
-        .auth-footer-link {
-            text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 14px;
-        }
-        .auth-footer-link span {
-            color: var(--primary-color); font-weight: 700; cursor: pointer; text-decoration: underline;
-        }
+        .input-group-wrapper { position: relative; margin-bottom: 8px; }
+        .input-group-wrapper input, .input-group-wrapper textarea { width: 100%; padding: 7px 55px 7px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; outline: none; margin-bottom: 0; }
+        .input-action-btns { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; gap: 3px; }
+        .btn-fill-auto { background: #e7f1ff; border: 1px solid #b6d4fe; color: #0d6efd; font-size: 10px; padding: 2px 5px; border-radius: 4px; cursor: pointer; }
+        .btn-clear-field { background: #f8d7da; border: 1px solid #f5c2c7; color: #dc3545; font-size: 10px; padding: 2px 5px; border-radius: 4px; cursor: pointer; }
 
-        .input-group-wrapper {
-            position: relative;
-            margin-bottom: 8px;
-        }
-        .input-group-wrapper input, .input-group-wrapper textarea {
-            width: 100%; padding: 7px 55px 7px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; outline: none; margin-bottom: 0;
-        }
-        .input-action-btns {
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 3px;
-        }
-        .btn-fill-auto {
-            background: #e7f1ff; border: 1px solid #b6d4fe; color: #0d6efd; font-size: 10px; padding: 2px 5px; border-radius: 4px; cursor: pointer;
-        }
-        .btn-clear-field {
-            background: #f8d7da; border: 1px solid #f5c2c7; color: #dc3545; font-size: 10px; padding: 2px 5px; border-radius: 4px; cursor: pointer;
-        }
+        .order-form-container select { width: 100%; padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; margin-bottom: 8px; outline: none; }
+        .order-summary-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
 
-        .order-form-container select {
-            width: 100%; padding: 7px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; margin-bottom: 8px; outline: none;
-        }
-        .order-summary-row {
-            display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;
-        }
-
-        .reseller-card {
-            background: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+        .reseller-card { background: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .reseller-card h3 { font-size: 14px; color: var(--primary-color); margin-bottom: 4px; }
         .reseller-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
 
-        .profile-box {
-            background: white; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 12px;
-        }
-        .profile-avatar {
-            width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 6px; border: 2px solid var(--primary-color);
-        }
-        .profile-menu-list {
-            background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .profile-menu-item {
-            padding: 10px 12px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; font-size: 12px; cursor: pointer; text-decoration: none; color: var(--text-color);
-        }
-        .profile-menu-item:last-child { border-bottom: none; }
-        .profile-menu-item i { color: var(--primary-color); margin-right: 6px; }
+        /* Profile Page Styles */
+        .profile-box { background: white; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+        .profile-avatar-wrapper { position: relative; width: 70px; height: 70px; margin: 0 auto 8px auto; }
+        .profile-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+        .profile-avatar-edit { position: absolute; bottom: 0; right: 0; background: var(--primary-color); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; }
+        .profile-menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .profile-menu-card { background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: var(--text-color); }
+        .profile-menu-card:hover { border-color: var(--primary-color); background: #f8fbff; }
+        .profile-menu-card i { font-size: 20px; color: var(--primary-color); margin-bottom: 2px; }
+        .profile-menu-card span { font-size: 11px; font-weight: 700; }
+        .profile-menu-card p { font-size: 9px; color: var(--text-muted); }
+
+        .profile-list-item { background: white; border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-color); text-decoration: none; color: var(--text-color); }
+        .profile-list-item i { color: var(--primary-color); margin-right: 8px; }
 
         /* Bottom Nav */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: white; box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
-            display: flex; justify-content: space-around; padding: 6px 0; z-index: 1000;
+            position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -2px 8px rgba(0,0,0,0.06); display: flex; justify-content: space-around; padding: 6px 0; z-index: 1000;
         }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 9px; font-weight: 500; cursor: pointer;
-        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 9px; font-weight: 500; cursor: pointer; }
         .nav-item i { font-size: 16px; margin-bottom: 2px; }
         .nav-item.active { color: var(--primary-color); }
     </style>
 </head>
 <body>
+
+    <!-- Custom Toast Notification -->
+    <div id="customToast"><i class="fa-solid fa-circle-info" style="color: #ffc107;"></i> <span id="toastMsgText">মেসেজ</span></div>
 
     <!-- Header -->
     <header>
@@ -875,9 +552,9 @@
                 <div class="lang-toggle glow-effect" onclick="toggleLanguage()">
                     <span id="langFlag">🇧🇩</span> <span id="langText">EN</span>
                 </div>
-                <div class="notif-icon glow-effect" onclick="alert(currentLang==='bn' ? 'কোনো নতুন নোটিফিকেশন নেই!' : 'No new notifications!')">
+                <div class="notif-icon glow-effect" onclick="openNotificationModal()">
                     <i class="fa-regular fa-bell"></i>
-                    <span class="notif-badge">২</span>
+                    <span class="notif-badge" id="notifBadgeCount">০</span>
                 </div>
             </div>
         </div>
@@ -975,7 +652,12 @@
             <button onclick="switchPage('homePage')" class="glow-effect" style="background: white; border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 12px; font-size: 11px; cursor: pointer; margin-bottom: 10px;"><i class="fa-solid fa-arrow-left"></i> <span id="btnBackHome">হোম পেজে ফিরুন</span></button>
             
             <div class="details-container-1">
-                <div class="details-img-carousel" id="detailsImgCarousel"></div>
+                <!-- 4/5 Images Auto (Every 2 Sec) & Swipe Carousel -->
+                <div class="details-slider-wrapper" id="detailsSliderWrapper">
+                    <div class="details-slider-track" id="detailsSliderTrack"></div>
+                </div>
+                <div class="details-slider-dots" id="detailsSliderDots"></div>
+
                 <h2 id="detName" style="font-size: 13px; font-weight: 700; margin-bottom: 4px;"></h2>
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                     <div id="detPrice" style="font-size: 14px; font-weight: 700; color: var(--primary-color);"></div>
@@ -988,14 +670,14 @@
                         <div class="size-selector" id="detSizes"></div>
                     </div>
                     <div class="selector-group">
-                        <div style="font-size: 10px; font-weight: 600;" id="lblColor">কালার সিলেক্ট:</div>
+                        <div style="font-size: 10px; font-weight: 600;" id="lblColor">কালার সিলেক্ট (৩টি অপশন):</div>
                         <div class="color-selector" id="detColors"></div>
                     </div>
                 </div>
 
                 <div class="action-row-buttons">
                     <button class="btn-order-main glow-effect" onclick="openOrderModal()"><span id="btnOrderNow">অর্ডার করুন</span></button>
-                    <button class="btn-cart-save glow-effect" onclick="alert(currentLang==='bn'?'প্রডাক্ট কার্টে সেভ রাখা হয়েছে!':'Product saved to cart!')"><span id="btnCartSave">কার্টে সেভ রাখুন</span></button>
+                    <button class="btn-cart-save glow-effect" onclick="saveProductToCart()"><span id="btnCartSave">কার্টে সেভ রাখুন</span></button>
                 </div>
 
                 <div class="order-direct-box">
@@ -1024,7 +706,7 @@
                 </button>
                 <div class="collapse-content" id="askContent">
                     <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-                        <input type="text" id="qnaInput" placeholder="আপনার প্রশ্ন লিখুন..." style="flex:1; padding:5px 8px; border:1px solid var(--border-color); border-radius:5px; font-size:11px; outline:none;">
+                        <input type="text" id="qnaInput" placeholder="আপনার প্রশ্ন বা লাইভ চ্যাট মেসেজ লিখুন..." style="flex:1; padding:5px 8px; border:1px solid var(--border-color); border-radius:5px; font-size:11px; outline:none;">
                         <button onclick="submitQuestion()" style="background:var(--primary-color); color:white; border:none; padding:5px 10px; border-radius:5px; font-size:11px; cursor:pointer;" id="btnSubmitQ">পাঠান</button>
                     </div>
                     <div id="qnaList"></div>
@@ -1062,7 +744,7 @@
             <div class="reseller-card">
                 <h3 id="resTitle">💼 রিসেলার প্রোগ্রাম ও কমিশন ব্যবসা</h3>
                 <p id="resDesc">সেলার ভাইয়ের পণ্য নিয়ে কোনো পুঁজি ছাড়াই ঘরে বসে রিসেলিং করে আয় করুন প্রতি অর্ডারে নিশ্চিত কমিশন!</p>
-                <button class="add-cart-btn glow-effect" style="width: 100%; padding: 8px; font-weight: 700; border-radius: 6px; font-size: 12px;" onclick="alert(currentLang==='bn'?'অভিনন্দন! আপনার রিসেলার অ্যাকাউন্ট সক্রিয় হয়েছে।':'Congratulations! Your reseller account is active.')" id="resBtn">রিসেলার হিসেবে যুক্ত হোন</button>
+                <button class="add-cart-btn glow-effect" style="width: 100%; padding: 8px; font-weight: 700; border-radius: 6px; font-size: 12px;" onclick="showToast(currentLang==='bn'?'অভিনন্দন! আপনার রিসেলার অ্যাকাউন্ট সক্রিয় হয়েছে।':'Congratulations! Your reseller account is active.')" id="resBtn">রিসেলার হিসেবে যুক্ত হোন</button>
             </div>
             <div class="reseller-card">
                 <h3 id="resDashTitle">📊 আপনার রিসেলিং ড্যাশবোর্ড</h3>
@@ -1083,59 +765,81 @@
     <div id="profilePage" class="page-view">
         <div class="container" style="padding-top: 12px;">
             <div class="profile-box">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" class="profile-avatar" alt="User" loading="lazy">
+                <div class="profile-avatar-wrapper">
+                    <img id="profileDisplayAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" class="profile-avatar" alt="User" loading="lazy">
+                    <label class="profile-avatar-edit" title="ছবি পরিবর্তন বা এডমিনের কাছে পাঠান">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" id="profileImageUploadInput" style="display: none;" onchange="handleProfileImageUpload(event)">
+                    </label>
+                </div>
                 <h3 id="displayProfileName" style="font-size: 15px; font-weight: 700;">মোহাম্মদ রহিম</h3>
+                <p id="displayProfileUsername" style="font-size: 11px; color: var(--primary-color); font-weight: 600;">@rahim_vai</p>
                 <p id="displayProfileContact" style="font-size: 10px; color: var(--text-muted);">01567856878 | rahim@gmail.com</p>
+                <p id="displayUserReferCode" style="font-size: 10px; color: #28a745; font-weight: 700; margin-top: 2px;">রেফার কোড: SV01</p>
             </div>
-            <div class="profile-menu-list">
-                <a class="profile-menu-item glow-effect" onclick="alert(currentLang==='bn'?'আপনার সকল অর্ডারসমূহ লোড হচ্ছে...':'Loading all orders...')">
-                    <div><i class="fa-solid fa-box"></i> <span id="profOrders">আমার অর্ডারসমূহ (Order Tracking)</span></div>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
-                </a>
-                <a class="profile-menu-item glow-effect" onclick="switchPage('resellerPage')">
-                    <div><i class="fa-solid fa-wallet"></i> <span id="profWallet">রিসেলার ব্যালেন্স ও কমিশন</span></div>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
-                </a>
-                <a class="profile-menu-item glow-effect" onclick="alert(currentLang==='bn'?'ডেলিভারি অ্যাড্রেস ম্যানেজ করুন':'Manage delivery address')">
-                    <div><i class="fa-solid fa-location-dot"></i> <span id="profAddress">ডেলিভারি ঠিকানা</span></div>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
-                </a>
-                <a class="profile-menu-item glow-effect" onclick="openSettingsModal()">
-                    <div><i class="fa-solid fa-gear"></i> <span id="profSettings">অ্যাকাউন্ট সেটিংস</span></div>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
-                </a>
-                <a class="profile-menu-item glow-effect" onclick="handleLogout()" style="color: #dc3545;">
-                    <div><i class="fa-solid fa-right-from-bracket"></i> <span id="profLogout">লগআউট</span></div>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
-                </a>
+
+            <!-- Profile Menu Grid & List Cards -->
+            <div class="profile-menu-grid">
+                <div class="profile-menu-card glow-effect" onclick="openOrderHistoryModal()">
+                    <i class="fa-solid fa-box-archive"></i>
+                    <span>অর্ডার হিস্ট্রি</span>
+                    <p>লাইভ অর্ডার ট্র্যাকিং</p>
+                </div>
+                <div class="profile-menu-card glow-effect" onclick="openReferShareModal()">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>রেফার ও আয়</span>
+                    <p>অ্যাফিলিয়েট বোনাস</p>
+                </div>
             </div>
+
+            <a class="profile-list-item glow-effect" onclick="switchPage('resellerPage')">
+                <div><i class="fa-solid fa-wallet"></i> <span id="profWallet">রিসেলার ব্যালেন্স ও কমিশন</span></div>
+                <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
+            </a>
+            <a class="profile-list-item glow-effect" onclick="openDeliveryAddressModal()">
+                <div><i class="fa-solid fa-location-dot"></i> <span id="profAddress">ডেলিভারি ঠিকানা ম্যানেজমেন্ট (+)</span></div>
+                <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
+            </a>
+            <a class="profile-list-item glow-effect" onclick="openSettingsModal()">
+                <div><i class="fa-solid fa-gear"></i> <span id="profSettings">অ্যাকাউন্ট সেটিংস</span></div>
+                <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
+            </a>
+            <a class="profile-list-item glow-effect" onclick="handleLogout()" style="color: #dc3545;">
+                <div><i class="fa-solid fa-right-from-bracket"></i> <span id="profLogout">লগআউট</span></div>
+                <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
+            </a>
         </div>
     </div>
 
     <!-- GLOBAL DEFAULT FOOTER -->
     <div class="container global-footer-wrapper">
         <div class="support-container glow-effect">
-            <a href="https://m.me/salervai" target="_blank" class="support-item chat glow-effect">
+            <a href="https://m.me/salervai" target="_blank" class="support-square-card chat glow-effect">
                 <i class="fa-solid fa-headset"></i>
                 <span id="supChat">লাইভ চ্যাট</span>
             </a>
-            <a href="https://wa.me/+8801567856878" target="_blank" class="support-item wa glow-effect">
+            <a href="https://m.me/salervai" target="_blank" class="support-square-card messenger glow-effect">
+                <i class="fa-brands fa-facebook-messenger"></i>
+                <span id="supMessenger">মেসেঞ্জার</span>
+            </a>
+            <a href="https://wa.me/+8801567856878" target="_blank" class="support-square-card wa glow-effect">
                 <i class="fa-brands fa-whatsapp"></i>
                 <span id="supWa">হোয়াটসঅ্যাপ</span>
             </a>
-            <a href="tel:01567856878" class="support-item messenger glow-effect">
+            <a href="tel:01567856878" class="support-square-card call glow-effect">
                 <i class="fa-solid fa-phone"></i>
                 <span id="supCall">কল করুন</span>
             </a>
         </div>
 
         <div class="copyright-container">
-            <div class="copyright-text" id="txtCopy">© 2026 সেলার ভাই (SalerVai). All Rights Reserved. Authentic products - Trusted place.</div>
+            <div class="copyright-text" id="txtCopy">© 2026 সেলার ভাই (SalerVai). All Rights Reserved.<br>Authentic products - Trusted place.</div>
             <div class="social-links">
                 <a href="https://www.facebook.com/salervai" target="_blank" class="fb"><i class="fa-brands fa-facebook"></i></a>
                 <a href="https://m.me/salervai" target="_blank" class="msg"><i class="fa-brands fa-facebook-messenger"></i></a>
-                <a href="https://salervai.vercel.app" target="_blank" class="web"><i class="fa-solid fa-globe"></i></a>
+                <a href="https://t.me/salervai" target="_blank" class="tg"><i class="fa-brands fa-telegram"></i></a>
                 <a href="https://wa.me/+8801567856878" target="_blank" class="wa"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://salervai.vercel.app" target="_blank" class="web"><i class="fa-solid fa-globe"></i></a>
             </div>
         </div>
     </div>
@@ -1147,7 +851,6 @@
                 <button onclick="closeLoginModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <!-- Login View -->
             <div id="loginViewSection">
                 <div class="auth-brand-header">
                     <img src="file_0000000004f0821199daf6a8e9c2dcf8.png" class="auth-brand-logo" alt="Logo">
@@ -1176,7 +879,6 @@
                 </div>
             </div>
 
-            <!-- Register View (Fully Redesigned & Saved to Firebase Users Collection) -->
             <div id="registerViewSection" style="display: none;">
                 <div class="auth-brand-header">
                     <img src="file_0000000004f0821199daf6a8e9c2dcf8.png" class="auth-brand-logo" alt="Logo">
@@ -1199,6 +901,11 @@
                     <input type="password" id="regPassword" placeholder="নতুন পাসওয়ার্ড তৈরি করুন">
                 </div>
 
+                <div class="auth-input-group">
+                    <i class="fa-solid fa-ticket"></i>
+                    <input type="text" id="regReferCode" placeholder="রেফার কোড দিন (অপশনাল)">
+                </div>
+
                 <button class="auth-main-btn btn-success" onclick="performRegister()" id="btnRegSubmit">রেজিস্ট্রেশন করুন</button>
 
                 <div class="auth-footer-link">
@@ -1206,7 +913,6 @@
                 </div>
             </div>
 
-            <!-- Forgot Password View -->
             <div id="forgotViewSection" style="display: none;">
                 <div class="auth-brand-header">
                     <img src="file_0000000004f0821199daf6a8e9c2dcf8.png" class="auth-brand-logo" alt="Logo">
@@ -1228,7 +934,92 @@
         </div>
     </div>
 
-    <!-- MODAL CONTAINER FOR ORDER FORM -->
+    <!-- ORDER HISTORY MODAL -->
+    <div class="modal-overlay" id="orderHistoryModal">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--primary-color);">📦 আমার অর্ডার হিস্ট্রি ও ট্র্যাকিং</h3>
+                <button onclick="closeOrderHistoryModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="orderHistoryListContainer" style="max-height: 350px; overflow-y: auto;">
+                <p style="text-align: center; font-size: 11px; color: var(--text-muted);">লোড হচ্ছে...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART MODAL -->
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--primary-color);">🛒 আপনার শপিং কার্ট</h3>
+                <button onclick="closeCartModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="cartListContainer" style="max-height: 350px; overflow-y: auto; margin-bottom: 10px;"></div>
+            <button onclick="openOrderModalFromCart()" style="width:100%; background:#28a745; color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;">অর্ডার প্রসিড করুন</button>
+        </div>
+    </div>
+
+    <!-- REFER & AFFILIATE SHARE MODAL -->
+    <div class="modal-overlay" id="referShareModal">
+        <div class="modal-container" style="text-align: center;">
+            <div style="position: absolute; right: 15px; top: 15px;">
+                <button onclick="closeReferShareModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--primary-color); margin-bottom: 6px;">🤝 রেফার ও অ্যাফিলিয়েট সিস্টেম</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">আপনার বন্ধু বা অন্যদের সাথে আপনার ইউনিক রেফার কোড শেয়ার করে নিশ্চিত কমিশন বা বোনাস অর্জন করুন!</p>
+            <div style="background: #f8f9fa; border: 1px dashed var(--primary-color); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                <span style="font-size: 10px; color: var(--text-muted);">আপনার ইউনিক রেফার কোড:</span><br>
+                <b id="modalUserReferCodeText" style="font-size: 18px; color: var(--primary-color);">SV01</b>
+            </div>
+            <button onclick="copyReferCode()" class="auth-main-btn" style="margin-bottom: 8px;"><i class="fa-regular fa-copy"></i> রেফার কোড কপি করুন</button>
+            <button onclick="shareReferLink()" class="auth-main-btn btn-success"><i class="fa-solid fa-share-nodes"></i> বন্ধুদের সাথে শেয়ার করুন</button>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION MODAL -->
+    <div class="modal-overlay" id="notificationModal">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--primary-color);">🔔 নোটিফিকেশন ও এডমিন রিপ্লাই</h3>
+                <button onclick="closeNotificationModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="notificationListContainer" style="max-height: 350px; overflow-y: auto;">
+                <p style="text-align: center; font-size: 11px; color: var(--text-muted);">কোনো নতুন নোটিফিকেশন নেই।</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELIVERY ADDRESS MANAGEMENT MODAL -->
+    <div class="modal-overlay" id="deliveryAddressModal">
+        <div class="modal-container order-form-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="font-size: 13px; font-weight: 700; color: var(--primary-color);" id="addrModalMainTitle">📍 ডেলিভারি ঠিকানা ম্যানেজমেন্ট (+)</h3>
+                <button onclick="closeDeliveryAddressModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="savedAddressesViewSection">
+                <div id="savedAddressesList" style="margin-bottom: 10px;"></div>
+                <button onclick="openAddNewAddressForm()" style="width:100%; background:var(--primary-color); color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;">+ নতুন ঠিকানা যোগ করুন</button>
+            </div>
+
+            <div id="addNewAddressFormSection" style="display: none;">
+                <div style="font-size: 11px; font-weight: 700; color: var(--primary-color); margin-bottom: 8px;">নতুন ডেলিভারি ঠিকানা ফর্ম</div>
+                
+                <div style="font-size: 10px; font-weight: 600;">ঠিকানার লেবেল (যেমন: বাসা, অফিস, দোকান):</div>
+                <input type="text" id="newAddrLabel" placeholder="যেমন: মিরপুর অফিস" style="margin-bottom: 6px; width:100%; padding:7px; border:1px solid var(--border-color); border-radius:6px; font-size:11px;">
+
+                <div style="font-size: 10px; font-weight: 600;">সম্পূর্ণ ঠিকানা বিবরণ:</div>
+                <textarea id="newAddrDetails" placeholder="রোড, বাসা নং, থানা, জেলা..." style="height: 55px; margin-bottom: 10px; width:100%; padding:7px; border:1px solid var(--border-color); border-radius:6px; font-size:11px;"></textarea>
+
+                <div style="display: flex; gap: 6px;">
+                    <button onclick="saveNewDeliveryAddress()" style="flex:1; background:#28a745; color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:11px; cursor:pointer;">সেভ করুন</button>
+                    <button onclick="backToSavedAddressesList()" style="flex:1; background:#6c757d; color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:11px; cursor:pointer;">ফিরে যান</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER MODAL -->
     <div class="modal-overlay" id="orderModal">
         <div class="modal-container order-form-container">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -1239,24 +1030,24 @@
             <div class="input-group-wrapper">
                 <input type="text" id="orderName" placeholder="আপনার নাম লিখুন">
                 <div class="input-action-btns">
-                    <button class="btn-fill-auto" onclick="autoFillField('orderName', 'profileName')" title="Saved Data">↘️</button>
-                    <button class="btn-clear-field" onclick="clearField('orderName')" title="Clear">❌</button>
+                    <button class="btn-fill-auto" onclick="autoFillField('orderName', 'profileName')">↘️</button>
+                    <button class="btn-clear-field" onclick="clearField('orderName')">❌</button>
                 </div>
             </div>
 
             <div class="input-group-wrapper">
                 <input type="text" id="orderPhone" placeholder="মোবাইল নাম্বার (যেমন: 015xxxxxxxx)">
                 <div class="input-action-btns">
-                    <button class="btn-fill-auto" onclick="autoFillField('orderPhone', 'profilePhone')" title="Saved Data">↘️</button>
-                    <button class="btn-clear-field" onclick="clearField('orderPhone')" title="Clear">❌</button>
+                    <button class="btn-fill-auto" onclick="autoFillField('orderPhone', 'profilePhone')">↘️</button>
+                    <button class="btn-clear-field" onclick="clearField('orderPhone')">❌</button>
                 </div>
             </div>
 
             <div class="input-group-wrapper">
                 <textarea id="orderAddress" placeholder="সম্পূর্ণ ঠিকানা (রোড, থানা, জেলা)" style="height: 40px;"></textarea>
                 <div class="input-action-btns" style="top: 30%;">
-                    <button class="btn-fill-auto" onclick="autoFillField('orderAddress', 'addrHome')" title="Saved Data">↘️</button>
-                    <button class="btn-clear-field" onclick="clearField('orderAddress')" title="Clear">❌</button>
+                    <button class="btn-fill-auto" onclick="autoFillField('orderAddress', 'addrHome')">↘️</button>
+                    <button class="btn-clear-field" onclick="clearField('orderAddress')">❌</button>
                 </div>
             </div>
             
@@ -1279,14 +1070,13 @@
                     <option value="Black">Black</option>
                     <option value="Blue">Blue</option>
                     <option value="Red">Red</option>
-                    <option value="Default">Default</option>
                 </select>
             </div>
 
             <div class="input-group-wrapper">
                 <textarea id="orderNote" placeholder="নোট (যদি কিছু বলার থাকে - অপশনাল)" style="height: 35px;"></textarea>
                 <div class="input-action-btns" style="top: 30%;">
-                    <button class="btn-clear-field" onclick="clearField('orderNote')" title="Clear">❌</button>
+                    <button class="btn-clear-field" onclick="clearField('orderNote')">❌</button>
                 </div>
             </div>
             
@@ -1312,43 +1102,28 @@
     <!-- PROFILE SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-container order-form-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="font-size: 13px; font-weight: 700; color: var(--primary-color);" id="setModalTitle">ব্যক্তিগত তথ্য ও ডেলিভারি ঠিকানা সেটিংস</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="font-size: 14px; font-weight: 700; color: var(--primary-color);"><i class="fa-solid fa-user-gear"></i> অ্যাকাউন্ট সেটিংস ও ইউজারনেম</h3>
                 <button onclick="closeSettingsModal()" style="background:none; border:none; font-size:16px; cursor:pointer; color:var(--text-muted);"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">ব্যক্তিগত নাম:</div>
-            <input type="text" id="profileName" value="মোহাম্মদ রহিম">
+            <div style="font-size: 11px; font-weight: 600; margin-bottom: 3px;">ব্যক্তিগত নাম:</div>
+            <input type="text" id="profileName" value="মোহাম্মদ রহিম" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; margin-bottom: 8px; outline: none;">
 
-            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">মোবাইল নাম্বার:</div>
-            <input type="text" id="profilePhone" value="01567856878">
+            <div style="font-size: 11px; font-weight: 600; margin-bottom: 3px;">ইউজারনেম (Username):</div>
+            <div style="position: relative; margin-bottom: 4px;">
+                <input type="text" id="profileUsername" value="rahim_vai" placeholder="ইউজারনেম লিখুন..." onkeyup="checkUsernameAvailability(this.value)" style="width: 100%; padding: 8px 30px 8px 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; outline: none;">
+                <span id="usernameStatusIcon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 14px;">✅</span>
+            </div>
+            <p id="usernameNoteText" style="font-size: 9px; color: #28a745; margin-bottom: 8px;">ইউজারনেম এভেইলেবল আছে।</p>
 
-            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">ইমেল এড্রেস:</div>
-            <input type="email" id="profileEmail" value="rahim@gmail.com">
+            <div style="font-size: 11px; font-weight: 600; margin-bottom: 3px;">মোবাইল নাম্বার:</div>
+            <input type="text" id="profilePhone" value="01567856878" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; margin-bottom: 8px; outline: none;">
 
-            <hr style="border:0; border-top:1px solid var(--border-color); margin:8px 0;">
+            <div style="font-size: 11px; font-weight: 600; margin-bottom: 3px;">ইমেল এড্রেস:</div>
+            <input type="email" id="profileEmail" value="rahim@gmail.com" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; margin-bottom: 12px; outline: none;">
 
-            <div style="font-size: 11px; font-weight: 700; color: var(--primary-color); margin-bottom: 4px;">মাল্টিপল ডেলিভারি ঠিকানা ম্যানেজমেন্ট:</div>
-            
-            <div style="font-size: 10px; font-weight: 600;">অফিস এড্রেস (Office Address):</div>
-            <textarea id="addrOffice" placeholder="অফিসের সম্পূর্ণ ঠিকানা লিখুন..." style="height: 35px;">ধানমন্ডি ৩২, ঢাকা</textarea>
-
-            <div style="font-size: 10px; font-weight: 600;">বাড়ি এড্রেস (Home Address):</div>
-            <textarea id="addrHome" placeholder="বাড়ির সম্পূর্ণ ঠিকানা লিখুন..." style="height: 35px;">মিরপুর ১০, ঢাকা</textarea>
-
-            <div style="font-size: 10px; font-weight: 600;">দোকান এড্রেস (Shop Address - Optional):</div>
-            <textarea id="addrShop" placeholder="দোকানের ঠিকানা (যদি থাকে)..." style="height: 35px;"></textarea>
-
-            <button onclick="saveProfileSettings()" style="width:100%; background:var(--primary-color); color:white; border:none; padding:9px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer; margin-top:6px;" id="btnSaveSettings">সেটিংস সেভ করুন</button>
-        </div>
-    </div>
-
-    <!-- FULL REVIEW DETAILS MODAL -->
-    <div class="modal-overlay" id="fullReviewModal">
-        <div class="modal-container" style="text-align: center;">
-            <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--primary-color);" id="revModalTitle">পূর্ণাঙ্গ রিভিউ বিস্তারিত</h3>
-            <div id="fullReviewContent" style="font-size: 11px; text-align: left; margin-bottom: 12px;"></div>
-            <button onclick="closeFullReviewModal()" style="background:var(--primary-color); color:white; border:none; padding:6px 14px; border-radius:6px; font-size:11px; cursor:pointer;" id="btnCloseRevModal">বন্ধ করুন</button>
+            <button onclick="saveProfileSettings()" style="width:100%; background:var(--primary-color); color:white; border:none; padding:10px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;" id="btnSaveSettings">সেটিংস সেভ করুন</button>
         </div>
     </div>
 
@@ -1358,7 +1133,7 @@
             <i class="fa-solid fa-house"></i>
             <span id="navHome">হোম</span>
         </a>
-        <a class="nav-item glow-effect" onclick="alert(currentLang==='bn'?'আপনার কার্ট খালি রয়েছে!':'Your cart is empty!')">
+        <a class="nav-item glow-effect" onclick="openCartModal()">
             <i class="fa-solid fa-cart-shopping"></i>
             <span id="navCart">কার্ট</span>
         </a>
@@ -1366,7 +1141,7 @@
             <i class="fa-solid fa-wallet"></i>
             <span id="navResell">রিসেল ও আয়</span>
         </a>
-        <a class="nav-item glow-effect" id="navProfileBtn" onclick="switchPage('profilePage')">
+        <a class="nav-item glow-effect" id="navProfileBtn" onclick="checkProfileAccess()">
             <i class="fa-solid fa-user"></i>
             <span id="navProfile">প্রোফাইল</span>
         </a>
@@ -1374,6 +1149,8 @@
 
     <script>
         let isUserLoggedIn = false;
+        let loggedInUserData = null;
+        let userCart = [];
         let dbBanners = [];
         let allProducts = {
             sneakers: [],
@@ -1381,10 +1158,176 @@
             fashion: [],
             foods: []
         };
+        let userDeliveryAddresses = [
+            { label: 'অফিস', address: 'ধানমন্ডি ৩২, ঢাকা' },
+            { label: 'বাসা', address: 'মিরপুর ১০, ঢাকা' }
+        ];
 
-        // ফায়ারবেজ থেকে রিয়েল-টাইম ডেটা লোড করার ফাংশন
+        // Custom Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('customToast');
+            document.getElementById('toastMsgText').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function checkProfileAccess() {
+            if (!isUserLoggedIn) {
+                showToast(currentLang === 'bn' ? 'দয়া করে প্রথমে লগইন করুন!' : 'Please login first!');
+                openLoginModal();
+            } else {
+                switchPage('profilePage');
+            }
+        }
+
+        function checkUsernameAvailability(username) {
+            let icon = document.getElementById('usernameStatusIcon');
+            let note = document.getElementById('usernameNoteText');
+            let cleanVal = username.trim().toLowerCase();
+
+            if (cleanVal.length < 3) {
+                icon.innerText = "❌";
+                note.style.color = "#dc3545";
+                note.innerText = currentLang === 'bn' ? 'ইউজারনেম কমপক্ষে ৩ অক্ষরের হতে হবে।' : 'Username must be at least 3 characters.';
+                return;
+            }
+
+            const takenUsernames = ['admin', 'salervai', 'rahim', 'test', 'root'];
+            if (takenUsernames.includes(cleanVal)) {
+                icon.innerText = "❌";
+                note.style.color = "#dc3545";
+                note.innerText = currentLang === 'bn' ? 'এই ইউজারনেমটি ইতিমধ্যে ব্যবহৃত হচ্ছে। অন্য একটি দিন।' : 'This username is already taken. Try another.';
+            } else {
+                icon.innerText = "✅";
+                note.style.color = "#28a745";
+                note.innerText = currentLang === 'bn' ? 'ইউজারনেম এভেইলেবল আছে। পরিবর্তন সফল হবে।' : 'Username is available. Change successful.';
+            }
+        }
+
+        function updateLoginButtonState() {
+            const loginBtn = document.getElementById('navLoginBtn');
+            if (isUserLoggedIn) { loginBtn.style.display = 'none'; } else { loginBtn.style.display = 'flex'; }
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; switchAuthView('login'); }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        function switchAuthView(view) {
+            document.getElementById('loginViewSection').style.display = view === 'login' ? 'block' : 'none';
+            document.getElementById('registerViewSection').style.display = view === 'register' ? 'block' : 'none';
+            document.getElementById('forgotViewSection').style.display = view === 'forgot' ? 'block' : 'none';
+        }
+
+        async function performLogin() {
+            let email = document.getElementById('loginEmail').value.trim();
+            let pass = document.getElementById('loginPassword').value.trim();
+            if(!email || !pass) { showToast(currentLang==='bn'?'দয়া করে ইমেল এবং পাসওয়ার্ড দিন।':'Please enter email and password.'); return; }
+            
+            try {
+                let userSnap = await db.collection("users").where("email", "==", email).get();
+                if(userSnap.empty) {
+                    loggedInUserData = { name: "মোহাম্মদ রহিম", email: email, username: "rahim_vai", referCode: "SV01", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" };
+                } else {
+                    loggedInUserData = userSnap.docs[0].data();
+                    if(!loggedInUserData.username) loggedInUserData.username = "rahim_vai";
+                }
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                updateProfileDisplay();
+                syncUserCartFromDB();
+                showToast(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
+                switchPage('profilePage');
+            } catch(err) {
+                loggedInUserData = { name: "মোহাম্মদ রহিম", email: email, username: "rahim_vai", referCode: "SV01", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60" };
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                updateProfileDisplay();
+                showToast(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
+                switchPage('profilePage');
+            }
+        }
+
+        async function performRegister() {
+            let name = document.getElementById('regName').value.trim();
+            let email = document.getElementById('regEmail').value.trim();
+            let pass = document.getElementById('regPassword').value.trim();
+            let referCode = document.getElementById('regReferCode').value.trim();
+
+            if(!name || !email || !pass) { showToast(currentLang==='bn'?'দয়া করে নাম, ইমেল এবং পাসওয়ার্ড পূরণ করুন।':'Please fill in name, email and password.'); return; }
+
+            try {
+                let counterSnap = await db.collection("settings").doc("counters").get();
+                let nextNum = 1;
+                if(counterSnap.exists && counterSnap.data().userCount) { nextNum = counterSnap.data().userCount + 1; }
+                await db.collection("settings").doc("counters").set({ userCount: nextNum }, { merge: true });
+                let generatedReferCode = "SV" + String(nextNum).padStart(2, '0');
+                let defaultUsername = email.split('@')[0] || "user" + nextNum;
+
+                let newUserObj = {
+                    name: name, email: email, username: defaultUsername, pass: pass, referCode: generatedReferCode, referredBy: referCode || 'None',
+                    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection("users").add(newUserObj);
+                loggedInUserData = newUserObj;
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                updateProfileDisplay();
+                showToast(currentLang === 'bn' ? 'রেজিস্ট্রেশন সফল হয়েছে!' : 'Registration successful!');
+                switchPage('profilePage');
+            } catch(err) {
+                loggedInUserData = { name: name, email: email, username: email.split('@')[0], referCode: "SV02", avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60' };
+                isUserLoggedIn = true;
+                updateLoginButtonState();
+                closeLoginModal();
+                updateProfileDisplay();
+                showToast(currentLang === 'bn' ? 'রেজিস্ট্রেশন সফল হয়েছে!' : 'Registration successful!');
+                switchPage('profilePage');
+            }
+        }
+
+        function updateProfileDisplay() {
+            if(!loggedInUserData) return;
+            document.getElementById('displayProfileName').innerText = loggedInUserData.name;
+            document.getElementById('displayProfileUsername').innerText = '@' + (loggedInUserData.username || 'rahim_vai');
+            document.getElementById('displayProfileContact').innerText = loggedInUserData.email;
+            document.getElementById('displayUserReferCode').innerText = (currentLang==='bn'?'রেফার কোড: ':'Refer Code: ') + (loggedInUserData.referCode || 'SV01');
+            document.getElementById('profileDisplayAvatar').src = loggedInUserData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60';
+            document.getElementById('profileName').value = loggedInUserData.name;
+            document.getElementById('profileUsername').value = loggedInUserData.username || 'rahim_vai';
+            document.getElementById('profileEmail').value = loggedInUserData.email;
+        }
+
+        function performRecovery() { showToast(currentLang === 'bn' ? 'পাসওয়ার্ড রিকভারি লিংক পাঠানো হয়েছে।' : 'Password recovery link sent.'); switchAuthView('login'); }
+        async function handleLogout() { isUserLoggedIn = false; loggedInUserData = null; updateLoginButtonState(); switchPage('homePage'); showToast(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে!' : 'Successfully logged out!'); }
+
+        async function handleProfileImageUpload(event) {
+            let file = event.target.files[0];
+            if(!file) return;
+            let reader = new FileReader();
+            reader.onload = async function(e) {
+                let base64Img = e.target.result;
+                document.getElementById('profileDisplayAvatar').src = base64Img;
+                if(loggedInUserData) {
+                    loggedInUserData.avatar = base64Img;
+                    try {
+                        let q = await db.collection("users").where("email", "==", loggedInUserData.email).get();
+                        if(!q.empty) { await db.collection("users").doc(q.docs[0].id).update({ avatar: base64Img }); }
+                    } catch(err) {}
+                }
+                showToast(currentLang === 'bn' ? 'প্রোফাইল ছবি আপডেট হয়েছে!' : 'Profile picture updated!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Realtime Firebase Sync for Banners and Products (Ensuring Unique Product Images)
         function initFirebaseRealtimeSync() {
-            // ১. ব্যানার ফেচ করা
+            // 1. Sync Banners from Firebase
             db.collection("banners").onSnapshot(snapshot => {
                 dbBanners = [];
                 snapshot.forEach(doc => {
@@ -1398,24 +1341,32 @@
                         });
                     }
                 });
-                if(dbBanners.length === 0) {
-                    dbBanners = defaultBanners;
-                }
+                if(dbBanners.length === 0) dbBanners = defaultBanners;
                 initBanners();
             });
 
-            // ২. প্রোডাক্টস ফেচ করা
+            // 2. Sync Products from Firebase
             db.collection("products").onSnapshot(snapshot => {
                 allProducts = { sneakers: [], gadgets: [], fashion: [], foods: [] };
                 snapshot.forEach(doc => {
                     let p = doc.data();
                     if(p.hidden) return;
                     
+                    // Fallback to specific category default image array if 'imgs' is missing or single string
+                    let fallbackImgs = defaultProducts[p.category || 'sneakers']?.[0]?.imgs || [
+                        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60",
+                        "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&auto=format&fit=crop&q=60",
+                        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop&q=60",
+                        "https://images.unsplash.com/photo-1539185441755-769473a23570?w=300&auto=format&fit=crop&q=60"
+                    ];
+
+                    let productImgs = (p.imgs && Array.isArray(p.imgs) && p.imgs.length > 0) ? p.imgs : fallbackImgs;
+
                     let formattedProd = {
                         id: doc.id,
                         brand: p.brand || "BRAND",
                         model: p.model || "MODEL",
-                        color: p.color || "Black",
+                        color: p.color || "Black / Blue / Red",
                         size: p.size || "40, 41, 42",
                         washable: p.washable || "হ্যাঁ",
                         name: typeof p.name === 'object' ? p.name : { bn: p.name, en: p.name },
@@ -1425,7 +1376,7 @@
                         numericPrice: p.numericPrice || 1000,
                         discount: p.discount || "-10%",
                         rating: p.rating || "4.8 (50)",
-                        imgs: p.imgs || ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60"],
+                        imgs: productImgs,
                         qna: p.qna || [],
                         reviews: p.reviews || []
                     };
@@ -1454,115 +1405,207 @@
 
         const defaultBanners = [
             { title: { bn: "রেডটেপ ও নাইকি প্রিমিয়াম স্নিকার্স কালেকশন", en: "Redtape & Nike Premium Sneakers Collection" }, desc: { bn: "১০০% অরিজিনাল এক্সপোর্ট গ্রেড লেদার জুতো", en: "100% Original Export Grade Leather Shoes" }, tag: { bn: "স্নিকার্স ফেস্ট", en: "Sneakers Fest" }, bg: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=60" },
+            { title: { bn: "স্মার্ট ওয়াচ ও প্রিমিয়াম গ্যাজেটস কালেকশন", en: "Smart Watch & Premium Gadgets Collection" }, desc: { bn: "আধুনিক প্রযুক্তির স্মার্ট ডিভাইস সেরা দামে", en: "Modern smart devices at best prices" }, tag: { bn: "গ্যাজেট অফার", en: "Gadget Offer" }, bg: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60" },
             { title: { bn: "সুন্দরবনের খাঁটি মধু ও তাজা চুইঝাল", en: "Pure Sundarban Honey & Fresh Chuijhal" }, desc: { bn: "শতভাগ নির্ভেজাল ও অর্গানিক গ্রামীণ পণ্য", en: "100% Pure & Organic Rural Products" }, tag: { bn: "খাঁটি ফুড", en: "Pure Food" }, bg: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=600&auto=format&fit=crop&q=60" }
         ];
 
         const defaultProducts = {
             sneakers: [
-                { brand: "REDTAPE", model: "RT-2026", color: "Black & Red", size: "40, 41, 42, 43", washable: "হ্যাঁ", name: { bn: "ক্লাসিক লেদার জুতো", en: "Classic Leather Shoes" }, sub: "পুরুষ", price: "৳ ২৮৫০", oldPrice: "পূর্বের মূল্য ৳ ৩৬০০", numericPrice: 2850, discount: "-21%", rating: "4.9 (142)", imgs: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
+                { brand: "REDTAPE", model: "RT-2026", color: "Black / Blue / Red", size: "40, 41, 42, 43", washable: "হ্যাঁ", name: { bn: "ক্লাসিক রেডটেপ লেদার জুতো", en: "Classic Redtape Leather Shoes" }, sub: "পুরুষ", price: "৳ ২৮৫০", oldPrice: "পূর্বের মূল্য ৳ ৩৬০০", numericPrice: 2850, discount: "-21%", rating: "4.9 (142)", imgs: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1539185441755-769473a23570?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] },
+                { brand: "NIKE", model: "NK-AirMax", color: "White / Black / Grey", size: "39, 40, 41, 42", washable: "হ্যাঁ", name: { bn: "নাইকি এয়ার ম্যাক্স স্পোর্টস স্নিকার্স", en: "Nike Air Max Sports Sneakers" }, sub: "পুরুষ", price: "৳ ৩৪৫০", oldPrice: "পূর্বের মূল্য ৳ ৪২০০", numericPrice: 3450, discount: "-18%", rating: "4.8 (98)", imgs: ["https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
             ],
-            gadgets: [],
-            fashion: [],
-            foods: []
+            gadgets: [
+                { brand: "ULTRA", model: "S9-Ultra", color: "Black / Silver / Orange", size: "Standard", washable: "না", name: { bn: "এস৯ আল্ট্রা স্মার্ট ওয়াচ (AMOLED)", en: "S9 Ultra Smart Watch" }, sub: "ঘড়ি", price: "৳ ১৮৫০", oldPrice: "পূর্বের মূল্য ৳ ২৫০০", numericPrice: 1850, discount: "-26%", rating: "4.9 (210)", imgs: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
+            ],
+            fashion: [
+                { brand: "ZARA", model: "ZR-Shirt", color: "Navy Blue / Black / White", size: "M, L, XL", washable: "হ্যাঁ", name: { bn: "প্রিমিয়াম ক্যাজুয়াল কটন শার্ট", en: "Premium Casual Cotton Shirt" }, sub: "শার্ট", price: "৳ ১২৫০", oldPrice: "পূর্বের মূল্য ৳ ১৬০০", numericPrice: 1250, discount: "-22%", rating: "4.8 (88)", imgs: ["https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
+            ],
+            foods: [
+                { brand: "SUNDARBAN", model: "Honey-500g", color: "Amber / Golden", size: "500gm", washable: "না", name: { bn: "সুন্দরবনের খাঁটি মধু (৫০০ গ্রাম)", en: "Pure Sundarban Honey (500g)" }, sub: "মধু", price: "৳ ৭৫০", oldPrice: "পূর্বের মূল্য ৳ ১০০০", numericPrice: 750, discount: "-25%", rating: "5.0 (180)", imgs: ["https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1471943311424-646960669fbc?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1581093583441-862ee567341e?w=300&auto=format&fit=crop&q=60", "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?w=300&auto=format&fit=crop&q=60"], qna: [], reviews: [] }
+            ]
         };
 
-        function updateLoginButtonState() {
-            const loginBtn = document.getElementById('navLoginBtn');
-            if (isUserLoggedIn) {
-                loginBtn.style.display = 'none';
-            } else {
-                loginBtn.style.display = 'flex';
+        // Cart Management & Sync with DB
+        async function saveProductToCart() {
+            if(!currentSelectedProduct) return;
+            let cartItem = {
+                id: currentSelectedProduct.id || Date.now().toString(),
+                name: typeof currentSelectedProduct.name === 'object' ? currentSelectedProduct.name.bn : currentSelectedProduct.name,
+                price: currentSelectedProduct.price,
+                numericPrice: currentSelectedProduct.numericPrice,
+                img: currentSelectedProduct.imgs[0],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            userCart.push(cartItem);
+            
+            if(isUserLoggedIn && loggedInUserData) {
+                try {
+                    await db.collection("carts").add({
+                        userEmail: loggedInUserData.email,
+                        item: cartItem,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch(e) {}
             }
+            showToast(currentLang==='bn'?'প্রডাক্ট কার্টে সেভ রাখা হয়েছে!':'Product saved to cart!');
         }
 
-        function openLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-            switchAuthView('login');
+        async function syncUserCartFromDB() {
+            if(!isUserLoggedIn || !loggedInUserData) return;
+            try {
+                let snap = await db.collection("carts").where("userEmail", "==", loggedInUserData.email).get();
+                userCart = [];
+                snap.forEach(doc => { userCart.push(doc.data().item); });
+            } catch(e) {}
         }
 
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-
-        function switchAuthView(view) {
-            document.getElementById('loginViewSection').style.display = view === 'login' ? 'block' : 'none';
-            document.getElementById('registerViewSection').style.display = view === 'register' ? 'block' : 'none';
-            document.getElementById('forgotViewSection').style.display = view === 'forgot' ? 'block' : 'none';
-        }
-
-        async function performLogin() {
-            let email = document.getElementById('loginEmail').value;
-            let pass = document.getElementById('loginPassword').value;
-            if(!email || !pass) {
-                alert(currentLang==='bn'?'দয়া করে ইমেল এবং পাসওয়ার্ড দিন।':'Please enter email and password.');
+        function openCartModal() {
+            document.getElementById('cartModal').style.display = 'flex';
+            const container = document.getElementById('cartListContainer');
+            container.innerHTML = '';
+            if(userCart.length === 0) {
+                container.innerHTML = `<p style="text-align: center; font-size: 11px; color: var(--text-muted); padding: 15px;">আপনার কার্ট খালি রয়েছে!</p>`;
                 return;
             }
-            try {
-                await auth.signInWithEmailAndPassword(email, pass);
-                isUserLoggedIn = true;
-                updateLoginButtonState();
-                closeLoginModal();
-                alert(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
-                switchPage('profilePage');
-            } catch(err) {
-                isUserLoggedIn = true;
-                updateLoginButtonState();
-                closeLoginModal();
-                alert(currentLang === 'bn' ? 'সফলভাবে লগইন করা হয়েছে!' : 'Successfully logged in!');
-                switchPage('profilePage');
-            }
+            userCart.forEach((item, idx) => {
+                container.innerHTML += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 6px; font-size: 11px;">
+                        <img src="${item.img}" style="width: 35px; height: 35px; object-fit: cover; border-radius: 4px;">
+                        <div style="flex: 1; margin-left: 8px;">
+                            <b>${item.name}</b><br><span style="color: var(--primary-color); font-weight: 700;">${item.price}</span>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" style="background:none; border:none; color:#dc3545; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
         }
 
-        // রেজিস্ট্রেশন করলে ফায়ারবেজের `users` কালেকশনে ডেটা সেভ হবে
-        async function performRegister() {
-            let name = document.getElementById('regName').value;
-            let email = document.getElementById('regEmail').value;
-            let pass = document.getElementById('regPassword').value;
+        function closeCartModal() { document.getElementById('cartModal').style.display = 'none'; }
+        function removeFromCart(idx) { userCart.splice(idx, 1); openCartModal(); showToast(currentLang==='bn'?'কার্ট থেকে প্রডাক্ট সরানো হয়েছে!':'Product removed from cart!'); }
+        function openOrderModalFromCart() {
+            closeCartModal();
+            if(userCart.length > 0) {
+                currentSelectedProduct = {
+                    name: userCart[0].name,
+                    price: userCart[0].price,
+                    numericPrice: userCart[0].numericPrice,
+                    discount: '-10%',
+                    imgs: [userCart[0].img]
+                };
+            }
+            openOrderModal();
+        }
 
-            if(!name || !email || !pass) {
-                alert(currentLang==='bn'?'দয়া করে সকল তথ্য পূরণ করুন।':'Please fill in all details.');
+        async function openOrderHistoryModal() {
+            document.getElementById('orderHistoryModal').style.display = 'flex';
+            const container = document.getElementById('orderHistoryListContainer');
+            container.innerHTML = `<p style="text-align: center; font-size: 11px; color: var(--text-muted);">লোড হচ্ছে...</p>`;
+            
+            try {
+                let snap = await db.collection("orders").orderBy("createdAt", "desc").get();
+                container.innerHTML = '';
+                if(snap.empty) { container.innerHTML = `<p style="text-align: center; font-size: 11px; color: var(--text-muted);">কোনো অর্ডার হিস্ট্রি পাওয়া যায়নি!</p>`; return; }
+                snap.forEach(doc => {
+                    let o = doc.data();
+                    container.innerHTML += `
+                        <div style="background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 8px; font-size: 11px;">
+                            <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 3px;">
+                                <span>${o.product || 'প্রডাক্ট'}</span>
+                                <span style="color: var(--primary-color);">${o.price || '৳ ০'}</span>
+                            </div>
+                            <div>গ্রাহক: ${o.name} (${o.phone})</div>
+                            <div>ঠিকানা: ${o.address}</div>
+                            <div style="margin-top: 4px; font-size: 10px; color: #28a745; font-weight: 700;">ট্র্যাকিং স্ট্যাটাস: ${o.status || 'Pending (অপেক্ষমান)'}</div>
+                        </div>
+                    `;
+                });
+            } catch(err) { container.innerHTML = `<p style="text-align: center; font-size: 11px; color: #dc3545;">ডেটা লোড করতে সমস্যা হয়েছে!</p>`; }
+        }
+
+        function closeOrderHistoryModal() { document.getElementById('orderHistoryModal').style.display = 'none'; }
+        function openReferShareModal() { let code = loggedInUserData ? (loggedInUserData.referCode || 'SV01') : 'SV01'; document.getElementById('modalUserReferCodeText').innerText = code; document.getElementById('referShareModal').style.display = 'flex'; }
+        function closeReferShareModal() { document.getElementById('referShareModal').style.display = 'none'; }
+        function copyReferCode() { let code = document.getElementById('modalUserReferCodeText').innerText; navigator.clipboard.writeText(code); showToast(currentLang === 'bn' ? 'রেফার কোড কপি করা হয়েছে: ' + code : 'Refer code copied: ' + code); }
+        function shareReferLink() { let code = document.getElementById('modalUserReferCodeText').innerText; let shareText = `সেলার ভাই-এ আমার রেফার কোড (${code}) ব্যবহার করে আকর্ষণীয় ডিসকাউন্ট ও অফার উপভোগ করুন!`; if (navigator.share) { navigator.share({ title: 'SalerVai Affiliate', text: shareText, url: window.location.href }); } else { copyReferCode(); } }
+
+        async function openNotificationModal() {
+            document.getElementById('notificationModal').style.display = 'flex';
+            document.getElementById('notifBadgeCount').innerText = '০';
+            const container = document.getElementById('notificationListContainer');
+            container.innerHTML = '';
+            
+            try {
+                let snap = await db.collection("notifications").orderBy("createdAt", "desc").get();
+                if(snap.empty) { container.innerHTML = `<p style="text-align: center; font-size: 11px; color: var(--text-muted);">কোনো নোটিফিকেশন নেই।</p>`; return; }
+                snap.forEach(doc => {
+                    let n = doc.data();
+                    container.innerHTML += `
+                        <div style="background: #f8f9fa; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 8px; font-size: 11px;">
+                            <b style="color: var(--primary-color);">অ্যাডমিন নোটিফিকেশন:</b>
+                            <p style="margin-top: 2px;">${n.message || n.reply}</p>
+                        </div>
+                    `;
+                });
+            } catch(err) { container.innerHTML = `<p style="text-align: center; font-size: 11px; color: var(--text-muted);">নোটিফিকেশন লোড করা যায়নি।</p>`; }
+        }
+
+        function closeNotificationModal() { document.getElementById('notificationModal').style.display = 'none'; }
+
+        function openDeliveryAddressModal() {
+            backToSavedAddressesList();
+            renderDeliveryAddresses();
+            document.getElementById('deliveryAddressModal').style.display = 'flex';
+        }
+
+        function closeDeliveryAddressModal() { document.getElementById('deliveryAddressModal').style.display = 'none'; }
+
+        function openAddNewAddressForm() {
+            document.getElementById('addrModalMainTitle').innerText = currentLang === 'bn' ? '➕ নতুন ডেলিভারি ঠিকানা যোগ করুন' : '➕ Add New Delivery Address';
+            document.getElementById('savedAddressesViewSection').style.display = 'none';
+            document.getElementById('addNewAddressFormSection').style.display = 'block';
+            document.getElementById('newAddrLabel').value = '';
+            document.getElementById('newAddrDetails').value = '';
+        }
+
+        function backToSavedAddressesList() {
+            document.getElementById('addrModalMainTitle').innerText = currentLang === 'bn' ? '📍 ডেলিভারি ঠিকানা ম্যানেজমেন্ট (+)' : '📍 Delivery Address Management (+)';
+            document.getElementById('addNewAddressFormSection').style.display = 'none';
+            document.getElementById('savedAddressesViewSection').style.display = 'block';
+            renderDeliveryAddresses();
+        }
+
+        function renderDeliveryAddresses() {
+            const list = document.getElementById('savedAddressesList');
+            list.innerHTML = '';
+            if(userDeliveryAddresses.length === 0) {
+                list.innerHTML = `<p style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 10px;">কোনো ঠিকানা সেভ করা নেই।</p>`;
                 return;
             }
-
-            try {
-                let cred = await auth.createUserWithEmailAndPassword(email, pass);
-                await db.collection("users").doc(cred.user.uid).set({
-                    name: name,
-                    email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                isUserLoggedIn = true;
-                updateLoginButtonState();
-                closeLoginModal();
-                alert(currentLang === 'bn' ? 'নতন অ্যাকাউন্ট সফলভাবে তৈরি ও ফায়ারবেজে সেভ হয়েছে!' : 'New account created & saved to Firebase successfully!');
-                switchPage('profilePage');
-            } catch(err) {
-                // ফায়ারবেজ ফেইল হলে ডেমো হিসেবে সেভ করা
-                await db.collection("users").add({
-                    name: name,
-                    email: email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                isUserLoggedIn = true;
-                updateLoginButtonState();
-                closeLoginModal();
-                alert(currentLang === 'bn' ? 'নতুন অ্যাকাউন্ট সফলভাবে তৈরি ও ফায়ারবেজে সেভ হয়েছে!' : 'New account created & saved to Firebase successfully!');
-                switchPage('profilePage');
-            }
+            userDeliveryAddresses.forEach((addr, idx) => {
+                list.innerHTML += `
+                    <div style="background: #f8f9fa; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                        <div>
+                            <b>📍 ${addr.label}:</b> ${addr.address}
+                        </div>
+                        <button onclick="removeDeliveryAddress(${idx})" style="background:none; border:none; color:#dc3545; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
         }
 
-        function performRecovery() {
-            alert(currentLang === 'bn' ? 'পাসওয়ার্ড রিকভারি লিংক আপনার ইমেলে পাঠানো হয়েছে।' : 'Password recovery link sent to your email.');
-            switchAuthView('login');
+        function saveNewDeliveryAddress() {
+            let label = document.getElementById('newAddrLabel').value.trim();
+            let details = document.getElementById('newAddrDetails').value.trim();
+            if(!label || !details) { showToast(currentLang==='bn'?'দয়া করে লেবেল ও বিস্তারিত ঠিকানা লিখুন।':'Please enter label and address details.'); return; }
+            userDeliveryAddresses.push({ label: label, address: details });
+            backToSavedAddressesList();
+            showToast(currentLang==='bn'?'নতুন ঠিকানা সফলভাবে সেভ হয়েছে!':'New address saved successfully!');
         }
 
-        async function handleLogout() {
-            await auth.signOut();
-            isUserLoggedIn = false;
-            updateLoginButtonState();
-            switchPage('homePage');
-            alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে!' : 'Successfully logged out!');
+        function removeDeliveryAddress(idx) {
+            userDeliveryAddresses.splice(idx, 1);
+            renderDeliveryAddresses();
+            showToast(currentLang==='bn'?'ঠিকানা মুছে ফেলা হয়েছে!':'Address removed!');
         }
 
         let currentLang = 'bn';
@@ -1588,9 +1631,10 @@
             document.getElementById('secFoods').innerText = currentLang === 'bn' ? 'খাঁটি ফুডস ও তাজা বাজার' : 'Pure Foods & Fresh Market';
 
             document.getElementById('supChat').innerText = currentLang === 'bn' ? 'লাইভ চ্যাট' : 'Live Chat';
+            document.getElementById('supMessenger').innerText = currentLang === 'bn' ? 'মেসেঞ্জার' : 'Messenger';
             document.getElementById('supWa').innerText = currentLang === 'bn' ? 'হোয়াটসঅ্যাপ' : 'WhatsApp';
             document.getElementById('supCall').innerText = currentLang === 'bn' ? 'কল করুন' : 'Call Us';
-            document.getElementById('txtCopy').innerText = currentLang === 'bn' ? '© 2026 সেলার ভাই (SalerVai). All Rights Reserved. Authentic products - Trusted place.' : '© 2026 SalerVai. All Rights Reserved. Authentic products - Trusted place.';
+            document.getElementById('txtCopy').innerText = currentLang === 'bn' ? '© 2026 সেলার ভাই (SalerVai). All Rights Reserved.\nAuthentic products - Trusted place.' : '© 2026 SalerVai. All Rights Reserved.\nAuthentic products - Trusted place.';
 
             document.getElementById('navHome').innerText = currentLang === 'bn' ? 'হোম' : 'Home';
             document.getElementById('navCart').innerText = currentLang === 'bn' ? 'কার্ট' : 'Cart';
@@ -1636,6 +1680,10 @@
             document.getElementById('ratingText').innerText = `(${stars}/৫)`;
         }
 
+        // Product Details Page: 4/5 Images Auto-Slide every 2 Seconds & Touch Swipe
+        let detailsSlideIdx = 0;
+        let detailsSlideInterval = null;
+
         function openProductDetails(product) {
             currentSelectedProduct = product;
             switchPage('productDetailsPage');
@@ -1650,14 +1698,54 @@
             document.getElementById('detAvailSizes').innerText = product.size;
             document.getElementById('detWashable').innerText = product.washable;
 
-            const carousel = document.getElementById('detailsImgCarousel');
-            carousel.innerHTML = '';
-            product.imgs.forEach(imgUrl => {
-                carousel.innerHTML += `
-                    <div class="details-img-item">
+            const track = document.getElementById('detailsSliderTrack');
+            const dots = document.getElementById('detailsSliderDots');
+            track.innerHTML = '';
+            dots.innerHTML = '';
+
+            let imgList = product.imgs && product.imgs.length > 0 ? product.imgs : [
+                "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=300&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1539185441755-769473a23570?w=300&auto=format&fit=crop&q=60"
+            ];
+
+            imgList.forEach((imgUrl, idx) => {
+                track.innerHTML += `
+                    <div class="details-slide-item">
                         <img src="${imgUrl}" alt="${nameVal}" loading="lazy">
                     </div>
                 `;
+                dots.innerHTML += `<div class="d-dot ${idx === 0 ? 'active' : ''}" onclick="currentDetailsSlide(${idx})"></div>`;
+            });
+
+            detailsSlideIdx = 0;
+            updateDetailsSlide();
+            if(detailsSlideInterval) clearInterval(detailsSlideInterval);
+            // Auto slide every 2 seconds
+            detailsSlideInterval = setInterval(() => {
+                detailsSlideIdx = (detailsSlideIdx + 1) % imgList.length;
+                updateDetailsSlide();
+            }, 2000);
+
+            const wrapper = document.getElementById('detailsSliderWrapper');
+            let startX = 0;
+            wrapper.onpointerdown = (e) => { startX = e.clientX; clearInterval(detailsSlideInterval); };
+            wrapper.onpointerup = (e) => {
+                let diff = startX - e.clientX;
+                if(Math.abs(diff) > 30) {
+                    if(diff > 0) detailsSlideIdx = (detailsSlideIdx + 1) % imgList.length;
+                    else detailsSlideIdx = (detailsSlideIdx - 1 + imgList.length) % imgList.length;
+                    updateDetailsSlide();
+                }
+                resetDetailsAutoSlide(imgList.length);
+            };
+
+            const colorsDiv = document.getElementById('detColors');
+            colorsDiv.innerHTML = '';
+            let defaultColors = ["Black", "Blue", "Red"];
+            defaultColors.forEach((cl, idx) => {
+                colorsDiv.innerHTML += `<div class="color-box ${idx===0?'active':''}" onclick="selectColorBox(this)">${cl}</div>`;
             });
 
             const sizesDiv = document.getElementById('detSizes');
@@ -1666,14 +1754,29 @@
                 sizesDiv.innerHTML += `<div class="size-box ${idx===0?'active':''}" onclick="selectSizeBox(this)">${sz.trim()}</div>`;
             });
 
-            const colorsDiv = document.getElementById('detColors');
-            colorsDiv.innerHTML = '';
-            product.color.split('/').forEach((cl, idx) => {
-                colorsDiv.innerHTML += `<div class="color-box ${idx===0?'active':''}" onclick="selectColorBox(this)">${cl.trim()}</div>`;
-            });
-
             renderQnA(product);
             renderReviews(product);
+        }
+
+        function updateDetailsSlide() {
+            const track = document.getElementById('detailsSliderTrack');
+            const dots = document.querySelectorAll('.d-dot');
+            if(track) track.style.transform = `translateX(-${detailsSlideIdx * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === detailsSlideIdx));
+        }
+
+        function currentDetailsSlide(n) {
+            detailsSlideIdx = n;
+            updateDetailsSlide();
+            if(detailsSlideInterval) clearInterval(detailsSlideInterval);
+        }
+
+        function resetDetailsAutoSlide(length) {
+            if(detailsSlideInterval) clearInterval(detailsSlideInterval);
+            detailsSlideInterval = setInterval(() => {
+                detailsSlideIdx = (detailsSlideIdx + 1) % length;
+                updateDetailsSlide();
+            }, 2000);
         }
 
         function selectSizeBox(el) {
@@ -1703,68 +1806,63 @@
             document.getElementById('sumTotal').innerText = '৳ ' + total.toLocaleString();
         }
 
-        function closeOrderModal() {
-            document.getElementById('orderModal').style.display = 'none';
-        }
-
-        function autoFillField(targetId, sourceSettingId) {
-            let val = document.getElementById(sourceSettingId).value;
-            document.getElementById(targetId).value = val;
-        }
-
-        function clearField(fieldId) {
-            document.getElementById(fieldId).value = '';
-        }
-
-        function openSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'flex';
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
+        function closeOrderModal() { document.getElementById('orderModal').style.display = 'none'; }
+        function autoFillField(targetId, sourceSettingId) { let val = document.getElementById(sourceSettingId).value; document.getElementById(targetId).value = val; }
+        function clearField(fieldId) { document.getElementById(fieldId).value = ''; }
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
 
         function saveProfileSettings() {
-            let name = document.getElementById('profileName').value;
-            let phone = document.getElementById('profilePhone').value;
-            let email = document.getElementById('profileEmail').value;
+            let name = document.getElementById('profileName').value.trim();
+            let username = document.getElementById('profileUsername').value.trim();
+            let email = document.getElementById('profileEmail').value.trim();
             
+            if(loggedInUserData) {
+                loggedInUserData.name = name;
+                loggedInUserData.username = username;
+                loggedInUserData.email = email;
+            }
             document.getElementById('displayProfileName').innerText = name;
-            document.getElementById('displayProfileContact').innerText = phone + ' | ' + email;
+            document.getElementById('displayProfileUsername').innerText = '@' + username;
+            document.getElementById('displayProfileContact').innerText = email;
             
-            alert(currentLang==='bn' ? 'আপনার ব্যক্তিগত তথ্য ও ডেলিভারি ঠিকানা সফলভাবে সেভ করা হয়েছে!' : 'Profile settings & addresses saved successfully!');
+            showToast(currentLang==='bn' ? 'অ্যাকাউন্ট সেটিংস ও ইউজারনেম সফলভাবে সেভ হয়েছে!' : 'Settings & username saved successfully!');
             closeSettingsModal();
         }
 
         function renderQnA(product) {
             const list = document.getElementById('qnaList');
             list.innerHTML = '';
-            if(product.qna.length === 0) {
-                list.innerHTML = `<div style="font-size:10px; color:var(--text-muted);">${currentLang==='bn'?'কোনো প্রশ্ন করা হয়নি।':'No questions asked yet.'}</div>`;
-                return;
-            }
+            if(!product.qna || product.qna.length === 0) { list.innerHTML = `<div style="font-size:10px; color:var(--text-muted);">${currentLang==='bn'?'কোনো প্রশ্ন নেই।':'No questions.'}</div>`; return; }
             product.qna.forEach(item => {
-                list.innerHTML += `<div style="font-size:10px; margin-bottom:4px;"><b>Q:</b> ${item.q}<br><b style="color:var(--primary-color);">Admin:</b> ${item.a}</div>`;
+                list.innerHTML += `<div style="font-size:10px; margin-bottom:4px;"><b>User:</b> ${item.q}<br><b style="color:var(--primary-color);">Admin:</b> ${item.a}</div>`;
             });
         }
 
-        function submitQuestion() {
-            let q = document.getElementById('qnaInput').value;
-            if(!q.trim()) return alert(currentLang==='bn'?'দয়া করে আপনার প্রশ্নটি লিখুন।':'Please write your question.');
-            currentSelectedProduct.qna.push({q: q, a: currentLang==='bn'?'ধন্যবাদ! খুব শীঘ্রই অ্যাডমিন রিপ্লাই দেবেন।':'Thanks! Admin will reply soon.'});
+        async function submitQuestion() {
+            let q = document.getElementById('qnaInput').value.trim();
+            if(!q) return showToast(currentLang==='bn'?'দয়া করে আপনার প্রশ্ন লিখুন।':'Please write your question.');
+            
+            try {
+                await db.collection("live_chats").add({
+                    userName: loggedInUserData ? loggedInUserData.name : 'Guest',
+                    message: q,
+                    productId: currentSelectedProduct.id || '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch(e) {}
+
+            currentSelectedProduct.qna.push({q: q, a: currentLang==='bn'?'অ্যাডমিনের উত্তরের অপেক্ষায়...':'Waiting for admin reply...'});
             document.getElementById('qnaInput').value = '';
             renderQnA(currentSelectedProduct);
-            alert(currentLang==='bn'?'আপনার প্রশ্নটি সফলভাবে জমা হয়েছে!':'Question submitted successfully!');
+            showToast(currentLang==='bn'?'প্রশ্ন পাঠানো হয়েছে!':'Question sent!');
         }
 
         function renderReviews(product) {
             const list = document.getElementById('reviewList');
             list.innerHTML = '';
-            if(product.reviews.length === 0) {
-                list.innerHTML = `<div style="font-size:10px; color:var(--text-muted);">${currentLang==='bn'?'এখনো কোনো রিভিউ নেই।':'No reviews yet.'}</div>`;
-                return;
-            }
-            product.reviews.forEach((r, index) => {
+            if(!product.reviews || product.reviews.length === 0) { list.innerHTML = `<div style="font-size:10px; color:var(--text-muted);">${currentLang==='bn'?'এখনো কোনো রিভিউ নেই।':'No reviews yet.'}</div>`; return; }
+            product.reviews.forEach((r) => {
                 let stars = '⭐'.repeat(r.rating);
                 list.innerHTML += `
                     <div class="review-card">
@@ -1776,92 +1874,63 @@
                             </div>
                         </div>
                         <div class="review-text-short">${r.comment}</div>
-                        ${r.img ? `<img src="${r.img}" class="review-img" onclick="openFullReviewModal(${index})" loading="lazy">` : ''}
-                        <div style="text-align: right; margin-top: 4px;">
-                            <span style="font-size:9px; color:var(--primary-color); cursor:pointer; font-weight:700;" onclick="openFullReviewModal(${index})">${currentLang==='bn'?'পূর্ণাঙ্গ রিভিউ দেখুন >>':'View Full Review >>'}</span>
-                        </div>
                     </div>
                 `;
             });
         }
 
-        function openFullReviewModal(reviewIndex) {
-            let r = currentSelectedProduct.reviews[reviewIndex];
-            let stars = '⭐'.repeat(r.rating);
-            let content = `
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                    <img src="${r.avatar}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;" loading="lazy">
-                    <div>
-                        <b style="font-size:12px;">${r.user}</b><br>
-                        <span style="font-size:10px; color:var(--text-muted);">${r.date} | ${stars}</span>
-                    </div>
-                </div>
-                <p style="font-size:11px; margin-bottom:8px; line-height:1.4;">${r.comment}</p>
-                ${r.img ? `<img src="${r.img}" style="width:100%; height:180px; border-radius:6px; object-fit:cover;" loading="lazy">` : ''}
-            `;
-            document.getElementById('fullReviewContent').innerHTML = content;
-            document.getElementById('fullReviewModal').style.display = 'flex';
-        }
-
-        function closeFullReviewModal() {
-            document.getElementById('fullReviewModal').style.display = 'none';
-        }
-
-        function submitReview() {
-            let comment = document.getElementById('reviewInput').value;
-            if(!comment.trim()) return alert(currentLang==='bn'?'দয়া করে কিছু রিভিউ লিখুন।':'Please write a review.');
-            currentSelectedProduct.reviews.unshift({
-                user: currentLang==='bn' ? 'মোহাম্মদ রহিম' : 'Mohammad Rahim', 
-                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60', 
+        async function submitReview() {
+            let comment = document.getElementById('reviewInput').value.trim();
+            if(!comment) return showToast(currentLang==='bn'?'দয়া করে কিছু রিভিউ লিখুন।':'Please write a review.');
+            
+            let newRev = {
+                user: loggedInUserData ? loggedInUserData.name : 'মোহাম্মদ রহিম', 
+                avatar: loggedInUserData ? loggedInUserData.avatar : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=60', 
                 date: new Date().toISOString().split('T')[0], 
                 rating: selectedRatingCount, 
-                comment: comment, 
-                img: ''
-            });
+                comment: comment
+            };
+            
+            currentSelectedProduct.reviews.unshift(newRev);
+
+            try {
+                await db.collection("reviews").add({
+                    productId: currentSelectedProduct.id || '',
+                    review: newRev,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch(e) {}
+
             document.getElementById('reviewInput').value = '';
             renderReviews(currentSelectedProduct);
-            alert(currentLang==='bn'?'আপনার মূল্যবান রিভিউটি জমা হয়েছে!':'Your valuable review has been submitted!');
+            showToast(currentLang==='bn'?'রিভিউ জমা হয়েছে!':'Review submitted!');
         }
 
-        // অর্ডার কনফার্ম করলে ফায়ারবেজের 'orders' কালেকশনে সেভ হবে যা অ্যাডমিন অ্যাপে লাইভ দেখা যাবে
         async function confirmFinalOrder() {
-            let name = document.getElementById('orderName').value;
-            let phone = document.getElementById('orderPhone').value;
-            let address = document.getElementById('orderAddress').value;
+            let name = document.getElementById('orderName').value.trim();
+            let phone = document.getElementById('orderPhone').value.trim();
+            let address = document.getElementById('orderAddress').value.trim();
             let area = document.getElementById('deliveryAreaSelect').value;
             let size = document.getElementById('orderSizeSelect').value;
             let color = document.getElementById('orderColorSelect').value;
             let payment = document.getElementById('paymentMethod').value;
-            let note = document.getElementById('orderNote').value;
+            let note = document.getElementById('orderNote').value.trim();
 
-            if(!name || !phone || !address) {
-                return alert(currentLang==='bn'?'দয়া করে নাম, মোবাইল নাম্বার এবং সম্পূর্ণ ঠিকানা প্রদান করুন।':'Please provide name, phone and complete address.');
-            }
+            if(!name || !phone || !address) { return showToast(currentLang==='bn'?'দয়া করে নাম, মোবাইল নাম্বার এবং সম্পূর্ণ ঠিকানা প্রদান করুন।':'Please provide name, phone and complete address.'); }
 
             let prodNameStr = typeof currentSelectedProduct.name === 'object' ? currentSelectedProduct.name.bn : currentSelectedProduct.name;
 
             try {
                 await db.collection("orders").add({
-                    name: name,
-                    phone: phone,
-                    address: address,
-                    product: prodNameStr,
-                    price: currentSelectedProduct.price,
-                    deliveryArea: area,
-                    size: size,
-                    color: color,
-                    paymentMethod: payment,
-                    note: note,
-                    status: 'Pending',
+                    name: name, phone: phone, address: address, product: prodNameStr, price: currentSelectedProduct.price,
+                    deliveryArea: area, size: size, color: color, paymentMethod: payment, note: note, status: 'Pending (অপেক্ষমান)',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                alert(currentLang==='bn'?'অভিনন্দন! আপনার অর্ডারটি সফলভাবে কনফার্ম হয়েছে ও অ্যাডমিন প্যানেলে পাঠানো হয়েছে।':'Congratulations! Your order is confirmed and sent to admin panel.');
+                showToast(currentLang==='bn'?'অভিনন্দন! আপনার অর্ডারটি সফলভাবে কনফার্ম হয়েছে ও ডাটাবেজে সেভ হয়েছে।':'Congratulations! Order confirmed and saved to database.');
                 closeOrderModal();
                 switchPage('homePage');
-            } catch(error) {
-                alert("অর্ডার পাঠাতে সমস্যা হয়েছে: " + error.message);
-            }
+            } catch(error) { showToast("অর্ডার পাঠাতে সমস্যা হয়েছে: " + error.message); }
         }
 
         let activeCategoryKey = 'sneakers';
@@ -1897,9 +1966,7 @@
             const grid = document.getElementById('categoryProductGrid');
             grid.innerHTML = '';
             let list = allProducts[catKey] || [];
-            if (subName !== 'সব') {
-                list = list.filter(p => p.sub === subName);
-            }
+            if (subName !== 'সব') { list = list.filter(p => p.sub === subName); }
 
             if(list.length === 0) {
                 grid.innerHTML = `<p style="grid-column: span 2; text-align: center; padding: 20px; color: var(--text-muted);">${currentLang==='bn'?'এই সাবমেনুতে কোনো প্রডাক্ট পাওয়া যায়নি!':'No products found in this submenu!'}</p>`;
@@ -1909,25 +1976,25 @@
             list.forEach(p => {
                 let pString = JSON.stringify(p).replace(/"/g, '&quot;');
                 let nameStr = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
+                let displayImg = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60';
+                
                 grid.innerHTML += `
                     <div class="product-card glow-effect" style="min-width: 100%; max-width: 100%;" onclick="openProductDetails(${pString})">
                         <span class="badge-discount">${p.discount}</span>
                         <button class="wishlist-btn glow-effect" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
                         <div class="product-img" style="height: 110px;">
-                            <img src="${p.imgs[0]}" alt="${nameStr}" loading="lazy">
+                            <img src="${displayImg}" alt="${nameStr}" loading="lazy">
                         </div>
                         <div class="product-details">
                             <div class="brand-name">${p.brand}</div>
                             <div class="product-name">${nameStr}</div>
-                            <div class="rating-box">
-                                <i class="fa-solid fa-star"></i> ${p.rating}
-                            </div>
+                            <div class="rating-box"><i class="fa-solid fa-star"></i> ${p.rating}</div>
                             <div class="price-row">
                                 <div>
                                     <div class="current-price">${p.price}</div>
                                     <div class="old-price">${p.oldPrice}</div>
                                 </div>
-                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); alert('${nameStr} ' + (currentLang==='bn'?'কার্টে যোগ করা হয়েছে!':'added to cart!'))"><i class="fa-solid fa-cart-plus"></i></button>
+                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); currentSelectedProduct=${pString}; saveProductToCart();"><i class="fa-solid fa-cart-plus"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1952,17 +2019,16 @@
 
             const grid = document.getElementById('categoryProductGrid');
             grid.innerHTML = '';
-            if(matched.length === 0) {
-                grid.innerHTML = `<p style="grid-column: span 2; text-align: center; padding: 20px;">${currentLang==='bn'?'কোনো প্রডাক্ট খুঁজে পাওয়া যায়নি!':'No products found!'}</p>`;
-                return;
-            }
+            if(matched.length === 0) { grid.innerHTML = `<p style="grid-column: span 2; text-align: center; padding: 20px;">${currentLang==='bn'?'কোনো প্রডাক্ট খুঁজে পাওয়া যায়নি!':'No products found!'}</p>`; return; }
             matched.forEach(p => {
                 let pString = JSON.stringify(p).replace(/"/g, '&quot;');
                 let nameStr = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
+                let displayImg = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60';
+                
                 grid.innerHTML += `
                     <div class="product-card glow-effect" style="min-width: 100%; max-width: 100%;" onclick="openProductDetails(${pString})">
                         <span class="badge-discount">${p.discount}</span>
-                        <div class="product-img" style="height: 110px;"><img src="${p.imgs[0]}" alt="${nameStr}" loading="lazy"></div>
+                        <div class="product-img" style="height: 110px;"><img src="${displayImg}" alt="${nameStr}" loading="lazy"></div>
                         <div class="product-details">
                             <div class="brand-name">${p.brand}</div>
                             <div class="product-name">${nameStr}</div>
@@ -2001,6 +2067,8 @@
         }
 
         let slideIndex = 0;
+        let autoSlideInterval = setInterval(autoSlide, 3500);
+
         function autoSlide() {
             let list = dbBanners.length > 0 ? dbBanners : defaultBanners;
             slideIndex = (slideIndex + 1) % list.length;
@@ -2011,16 +2079,32 @@
             const track = document.getElementById('bannerTrack');
             const dots = document.querySelectorAll('.dot');
             if(track) track.style.transform = `translateX(-${slideIndex * 100}%)`;
-            dots.forEach((dot, idx) => {
-                dot.classList.toggle('active', idx === slideIndex);
-            });
+            dots.forEach((dot, idx) => { dot.classList.toggle('active', idx === slideIndex); });
         }
 
-        function currentSlide(n) {
-            slideIndex = n;
-            updateSlide();
+        function currentSlide(n) { slideIndex = n; updateSlide(); resetAutoSlide(); }
+        function resetAutoSlide() { clearInterval(autoSlideInterval); autoSlideInterval = setInterval(autoSlide, 3500); }
+
+        const sliderContainer = document.getElementById('bannerSliderContainer');
+        let startX = 0;
+        let isDragging = false;
+
+        if (sliderContainer) {
+            sliderContainer.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; isDragging = true; clearInterval(autoSlideInterval); });
+            sliderContainer.addEventListener('touchend', (e) => { if (!isDragging) return; let endX = e.changedTouches[0].clientX; handleSwipe(startX, endX); isDragging = false; resetAutoSlide(); });
+            sliderContainer.addEventListener('mousedown', (e) => { startX = e.clientX; isDragging = true; clearInterval(autoSlideInterval); });
+            sliderContainer.addEventListener('mouseup', (e) => { if (!isDragging) return; let endX = e.clientX; handleSwipe(startX, endX); isDragging = false; resetAutoSlide(); });
         }
-        setInterval(autoSlide, 3500);
+
+        function handleSwipe(start, end) {
+            let list = dbBanners.length > 0 ? dbBanners : defaultBanners;
+            let diff = start - end;
+            if (Math.abs(diff) > 40) {
+                if (diff > 0) slideIndex = (slideIndex + 1) % list.length;
+                else slideIndex = (slideIndex - 1 + list.length) % list.length;
+                updateSlide();
+            }
+        }
 
         function renderProducts(containerId, list) {
             const container = document.getElementById(containerId);
@@ -2031,25 +2115,25 @@
             list.forEach(p => {
                 let pString = JSON.stringify(p).replace(/"/g, '&quot;');
                 let nameStr = typeof p.name === 'object' ? (p.name[currentLang] || p.name.bn) : p.name;
+                let displayImg = (p.imgs && p.imgs.length > 0) ? p.imgs[0] : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop&q=60';
+
                 container.innerHTML += `
                     <div class="product-card glow-effect" onclick="openProductDetails(${pString})">
                         <span class="badge-discount">${p.discount}</span>
                         <button class="wishlist-btn glow-effect" onclick="event.stopPropagation()"><i class="fa-regular fa-heart"></i></button>
                         <div class="product-img">
-                            <img src="${p.imgs[0]}" alt="${nameStr}" loading="lazy">
+                            <img src="${displayImg}" alt="${nameStr}" loading="lazy">
                         </div>
                         <div class="product-details">
                             <div class="brand-name">${p.brand}</div>
                             <div class="product-name">${nameStr}</div>
-                            <div class="rating-box">
-                                <i class="fa-solid fa-star"></i> ${p.rating}
-                            </div>
+                            <div class="rating-box"><i class="fa-solid fa-star"></i> ${p.rating}</div>
                             <div class="price-row">
                                 <div>
                                     <div class="current-price">${p.price}</div>
                                     <div class="old-price">${p.oldPrice}</div>
                                 </div>
-                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); alert('${nameStr} ' + (currentLang==='bn'?'কার্টে যোগ করা হয়েছে!':'added to cart!'))"><i class="fa-solid fa-cart-plus"></i></button>
+                                <button class="add-cart-btn glow-effect" onclick="event.stopPropagation(); currentSelectedProduct=${pString}; saveProductToCart();"><i class="fa-solid fa-cart-plus"></i></button>
                             </div>
                         </div>
                     </div>
