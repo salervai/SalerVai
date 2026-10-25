@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সেলারভাই | অ্যাডমিন প্যানেল</title>
+    <title>SV Controller - মোবাইল অ্যাডমিন প্যানেল</title>
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,7 +14,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // ফায়ারবেজ কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyAPyJ9-DJq0Hvq8k0Uf_wdz78GgKm9n_sw",
             authDomain: "salervai.firebaseapp.com",
@@ -31,25 +30,40 @@
     <style>
         :root {
             --primary-color: #0d6efd;
-            --bg-color: #f0f2f5;
+            --bg-color: #f0f4f8;
             --card-bg: #ffffff;
             --text-color: #212529;
             --text-muted: #6c757d;
-            --border-color: #dee2e6;
+            --border-color: #e2e8f0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        .container { max-width: 600px; width: 100%; margin: 0 auto; padding: 8px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        
+        .container { max-width: 480px; width: 100%; margin: 0 auto; padding: 6px 10px 50px 10px; flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
 
-        /* Modern Beautiful Login Screen */
+        @keyframes blinkWarning {
+            0% { background-color: #fff3cd; color: #856404; }
+            50% { background-color: #ffc107; color: #000; }
+            100% { background-color: #fff3cd; color: #856404; }
+        }
+        .blink-badge { animation: blinkWarning 1s infinite; font-weight: 700; padding: 1px 5px; border-radius: 4px; font-size: 10px; }
+        
+        @keyframes blinkRed {
+            0% { color: #dc3545; }
+            50% { color: #ff6b6b; transform: scale(1.1); }
+            100% { color: #dc3545; }
+        }
+        .blink-red { animation: blinkRed 0.8s infinite; }
+
+        /* Login Screen */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #0d6efd, #0043a8);
-            display: flex; justify-content: center; align-items: center; z-index: 3000; padding: 15px;
+            display: flex; justify-content: center; align-items: center; z-index: 5000; padding: 15px;
         }
         .login-card {
-            background: white; width: 100%; max-width: 360px; padding: 30px 20px; border-radius: 16px;
+            background: white; width: 100%; max-width: 340px; padding: 30px 20px; border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center;
         }
         .login-avatar {
@@ -58,643 +72,986 @@
             border: 2px solid var(--primary-color);
         }
         .login-card h2 { font-size: 16px; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
-        .login-card p { font-size: 10px; color: var(--text-muted); margin-bottom: 20px; }
+        .login-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 15px; }
         .login-input-group { position: relative; margin-bottom: 12px; text-align: left; }
         .login-input-group i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px; }
         .login-input-group input {
             width: 100%; padding: 10px 12px 10px 35px; border: 1px solid var(--border-color); border-radius: 8px;
-            font-size: 12px; outline: none; background: #f8f9fa; transition: 0.2s;
+            font-size: 12px; outline: none; background: #f8f9fa;
         }
-        .login-input-group input:focus { border-color: var(--primary-color); background: white; box-shadow: 0 0 0 3px rgba(13,110,253,0.1); }
         .login-btn {
             width: 100%; background: var(--primary-color); color: white; border: none; padding: 10px; border-radius: 8px;
-            font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; margin-top: 5px;
+            font-weight: 700; font-size: 12px; cursor: pointer; margin-top: 5px;
         }
-        .login-btn:hover { background: #0b5ed7; }
 
-        /* Admin Dashboard Container (No Scrolling Layout) */
-        #adminDashboard { display: none; height: 100vh; flex-direction: column; justify-content: space-between; }
-        
-        .admin-header {
-            background: white; padding: 8px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        /* Top Navigation Bar (Matched Screenshot) */
+        .top-nav-bar {
+            background: white; padding: 8px 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--border-color); box-shadow: 0 2px 6px rgba(0,0,0,0.03);
         }
-        .admin-header h1 { font-size: 13px; font-weight: 700; color: var(--primary-color); }
+        .top-nav-center { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 15px; color: #1e293b; }
+        .top-nav-center i { color: var(--primary-color); font-size: 18px; }
+        .hamburger-icon { font-size: 18px; cursor: pointer; color: var(--text-color); }
+        .view-frontend-btn {
+            background: #e7f1ff; border: 1px solid #b6d4fe; color: var(--primary-color); padding: 5px 10px; border-radius: 8px;
+            font-size: 11px; font-weight: 700; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 4px;
+        }
 
-        /* Dashboard Square Cards (Stats) */
-        .dashboard-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 4px 0;
+        /* Hamburger Menu Drawer */
+        .hamburger-drawer {
+            position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; z-index: 4000;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; padding: 15px; overflow-y: auto;
         }
+        .hamburger-drawer.open { left: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        .drawer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .drawer-item {
+            background: #f8f9fa; border: 1px solid var(--border-color); padding: 10px 6px; border-radius: 8px; text-align: center; cursor: pointer;
+        }
+        .drawer-item i { font-size: 16px; color: var(--primary-color); margin-bottom: 4px; display: block; }
+        .drawer-item span { font-size: 10px; font-weight: 700; color: var(--text-color); }
+
+        /* Welcome Card Banner (Screenshot Match) */
+        .welcome-card {
+            background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px;
+            display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .welcome-left { display: flex; align-items: center; gap: 10px; }
+        .welcome-avatar-icon {
+            width: 38px; height: 38px; background: #e0f2fe; color: #0284c7; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .welcome-text h3 { font-size: 13px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 4px; }
+        .welcome-text p { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+        .status-pill {
+            background: #dcfce7; color: #15803d; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 20px;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        /* Section Header Title */
+        .section-title-bar {
+            display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: #334155; margin: 2px 2px;
+        }
+        .section-title-bar span.action-link { font-size: 11px; color: var(--primary-color); cursor: pointer; font-weight: 600; }
+
+        /* Top 3 Stat Cards (Screenshot Match) */
+        .stats-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .stat-card {
-            background: white; padding: 8px 4px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color);
+            background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
-        .stat-circle {
-            width: 32px; height: 32px; border-radius: 50%; background: #e7f1ff; color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; margin: 0 auto 3px auto; border: 1.5px solid var(--primary-color);
+        .stat-icon-box {
+            width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px;
         }
-        .stat-card h3 { font-size: 9px; color: var(--text-muted); font-weight: 600; }
-        .stat-card p { font-size: 11px; font-weight: 700; color: var(--text-color); }
+        .stat-card h4 { font-size: 10px; font-weight: 600; color: var(--text-muted); }
+        .stat-card .stat-val { font-size: 14px; font-weight: 700; color: #0f172a; }
 
-        /* Square Card Navigation / Menu Layout */
-        .square-menu-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin: 4px 0;
+        /* Management 2x2 Grid (Screenshot Match) */
+        .grid-cards-2x2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .management-card {
+            background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 10px; transition: 0.2s;
         }
-        .square-menu-card {
-            background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 8px; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: 0.2s;
+        .management-card:hover { border-color: var(--primary-color); background: #f8fafc; }
+        .mgmt-icon-box {
+            width: 32px; height: 32px; background: #e0f2fe; color: var(--primary-color); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
         }
-        .square-menu-card:hover, .square-menu-card.active {
-            border-color: var(--primary-color); background: #f0f4ff;
-        }
-        .square-menu-card i { font-size: 16px; color: var(--primary-color); margin-bottom: 3px; display: block; }
-        .square-menu-card span { font-size: 11px; font-weight: 700; color: var(--text-color); }
+        .mgmt-info span { font-size: 11px; font-weight: 700; color: #1e293b; display: block; }
 
-        /* Section Cards & Panels (Initially Hidden) */
-        .admin-card {
-            background: white; border-radius: 8px; padding: 10px; margin: 4px 0; border: 1px solid var(--border-color);
-            max-height: 38vh; overflow-y: auto; display: none;
+        /* Quick Access 4 Column Grid (Screenshot Match) */
+        .quick-access-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .quick-card {
+            background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
-        .admin-card.active-panel { display: block; }
-        .admin-card h2 { font-size: 11px; font-weight: 700; margin-bottom: 6px; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .quick-card i { font-size: 16px; color: var(--primary-color); }
+        .quick-card span { font-size: 10px; font-weight: 700; color: #334155; }
+
+        /* Live Activity Box (Screenshot Match) */
+        .live-activity-card {
+            background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .live-activity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; font-weight: 700; color: #1e293b; }
+        .live-badge-demo { background: #dcfce7; color: #15803d; font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
+        
+        .activity-row-item {
+            display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 10px;
+        }
+        .activity-row-item:last-child { border-bottom: none; }
+        .act-left { display: flex; align-items: center; gap: 8px; }
+        .act-icon-circle { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .act-details b { font-size: 10px; color: #1e293b; display: block; }
+        .act-details span { font-size: 9px; color: var(--text-muted); }
+        .act-time { font-size: 9px; color: var(--text-muted); white-space: nowrap; }
+
+        .activity-footer-btn {
+            background: #f8fafc; border: 1px dashed var(--border-color); color: var(--primary-color); text-align: center;
+            padding: 8px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 8px; display: block;
+        }
+
+        /* Fullscreen Modal Panels */
+        .fullscreen-panel {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 4500;
+            display: none; flex-direction: column; padding: 15px; overflow-y: auto;
+        }
+        .fullscreen-panel.active { display: flex; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
+        .panel-header h2 { font-size: 14px; font-weight: 700; color: var(--primary-color); }
 
         /* Form Inputs */
-        .form-group { margin-bottom: 5px; }
-        .form-group label { font-size: 9px; font-weight: 600; display: block; margin-bottom: 1px; }
+        .form-group { margin-bottom: 8px; }
+        .form-group label { font-size: 11px; font-weight: 600; display: block; margin-bottom: 3px; }
         .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 10px; outline: none; background: #fafafa;
+            width: 100%; padding: 9px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 11px; outline: none; background: #fafafa;
         }
-        .form-group textarea { height: 35px; }
+        .form-group textarea { height: 50px; }
 
-        /* Live Preview Box */
-        .preview-box {
-            background: #f8f9fa; border: 1px dashed var(--primary-color); border-radius: 6px; padding: 6px; margin-top: 6px;
+        .btn-submit { background: #28a745; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 11px; cursor: pointer; width: 100%; margin-top: 6px; }
+        .btn-danger { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; }
+        .btn-warning { background: #ffc107; color: #000; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 700; }
+        .btn-primary-sm { background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: 600; }
+
+        .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 11px; }
+
+        /* Distinct Product & Banner Customize Card Styles */
+        .custom-item-card {
+            background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px;
         }
-        .preview-box h4 { font-size: 9px; color: var(--primary-color); margin-bottom: 2px; font-weight: 700; }
+        .custom-item-header { display: flex; align-items: center; gap: 10px; }
+        .custom-item-actions { display: flex; gap: 6px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 8px; }
 
-        .btn-submit {
-            background: #28a745; color: white; border: none; padding: 6px 10px; border-radius: 5px; font-weight: 700; font-size: 10px; cursor: pointer; width: 100%; margin-top: 5px;
+        /* Bottom Navigation Bar (Matched Screenshot) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-around; padding: 8px 0; z-index: 3000; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
-        .btn-danger { background: #dc3545; color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 600; }
-        .btn-warning { background: #ffc107; color: #000; border: none; padding: 3px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 700; }
-        .btn-primary-sm { background: var(--primary-color); color: white; border: none; padding: 3px 6px; border-radius: 4px; font-size: 9px; cursor: pointer; font-weight: 600; }
+        .bottom-nav-item { text-align: center; cursor: pointer; color: var(--text-muted); font-size: 10px; font-weight: 600; flex: 1; }
+        .bottom-nav-item i { font-size: 16px; display: block; margin-bottom: 2px; color: var(--primary-color); }
 
-        .admin-item-row {
-            display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border-color); font-size: 10px;
-        }
-
-        /* Confirmation Popup Modal */
+        /* Modal Overlay */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
-            display: none; justify-content: center; align-items: center; z-index: 4000; padding: 15px;
+            display: none; justify-content: center; align-items: center; z-index: 6000; padding: 15px;
         }
-        .modal-card {
-            background: white; width: 100%; max-width: 300px; padding: 15px; border-radius: 10px; text-align: center;
-        }
-        .modal-card h3 { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
-        .modal-card p { font-size: 10px; color: var(--text-muted); margin-bottom: 12px; }
+        .modal-card { background: white; width: 100%; max-width: 280px; padding: 15px; border-radius: 10px; text-align: center; }
+        .modal-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+        .modal-card p { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- 1. MODERN SECURE LOGIN SCREEN -->
+    <!-- 1. LOGIN SCREEN -->
     <div id="loginScreen">
         <div class="login-card">
             <div class="login-avatar"><i class="fa-solid fa-shield-halved"></i></div>
-            <h2>অ্যাডমিন পোর্টাল</h2>
-            <p>নিরাপদ প্রবেশাধিকারের জন্য তথ্য দিন</p>
+            <h2>SV Controller</h2>
+            <p>মোবাইল অ্যাডমিন প্যানেলে প্রবেশ করুন</p>
             <div class="login-input-group">
                 <i class="fa-solid fa-user"></i>
-                <input type="text" id="adminUser" placeholder="ইউজারনেম লিখুন">
+                <input type="text" id="adminUser" placeholder="ইউজারনেম">
             </div>
             <div class="login-input-group">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" id="adminPass" placeholder="পাসওয়ার্ড লিখুন">
+                <input type="password" id="adminPass" placeholder="পাসওয়ার্ড">
             </div>
             <button class="login-btn" onclick="handleAdminLogin()">প্রবেশ করুন</button>
         </div>
     </div>
 
-    <!-- 2. ADMIN DASHBOARD (NO SCROLLING HOME LAYOUT) -->
+    <!-- 2. HAMBURGER DRAWER -->
+    <div class="hamburger-drawer" id="hamburgerDrawer">
+        <div class="drawer-header">
+            <h3 style="font-size: 12px; font-weight: 700; color: var(--primary-color);">📌 মেনু অপশন</h3>
+            <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="toggleHamburger()"></i>
+        </div>
+        <div class="drawer-grid">
+            <div class="drawer-item" onclick="openPanel('panelProducts'); toggleHamburger();"><i class="fa-solid fa-box"></i><span>পণ্যসমূহ</span></div>
+            <div class="drawer-item" onclick="openPanel('panelOrders'); toggleHamburger();"><i class="fa-solid fa-receipt"></i><span>অর্ডার</span></div>
+            <div class="drawer-item" onclick="openPanel('panelBanners'); toggleHamburger();"><i class="fa-solid fa-images"></i><span>ব্যানার</span></div>
+            <div class="drawer-item" onclick="openPanel('panelUsers'); toggleHamburger();"><i class="fa-solid fa-users"></i><span>ইউজার</span></div>
+            <div class="drawer-item" onclick="openPanel('panelAdmins'); toggleHamburger();"><i class="fa-solid fa-user-shield"></i><span>এডমিন</span></div>
+            <div class="drawer-item" onclick="openPanel('panelAddProduct'); toggleHamburger();"><i class="fa-solid fa-square-plus"></i><span>প্রডাক্ট যোগ</span></div>
+            <div class="drawer-item" onclick="openPanel('panelSiteConfig'); toggleHamburger();"><i class="fa-solid fa-gears"></i><span>কনফিগার</span></div>
+            <div class="drawer-item" onclick="logoutAdmin();"><i class="fa-solid fa-right-from-bracket"></i><span>লগআউট</span></div>
+        </div>
+    </div>
+
+    <!-- 3. ADMIN DASHBOARD (Matched Screenshot Layout) -->
     <div id="adminDashboard" class="container">
         
-        <!-- Header -->
-        <div class="admin-header">
-            <h1>🛡️ সেলার ভাই - অ্যাডমিন প্যানেল</h1>
-            <button onclick="logoutAdmin()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</button>
+        <!-- Top Navigation Bar -->
+        <div class="top-nav-bar">
+            <i class="fa-solid fa-bars hamburger-icon" onclick="toggleHamburger()"></i>
+            <div class="top-nav-center">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>SV Controller</span>
+            </div>
+            <button class="view-frontend-btn" onclick="toggleViewMode()" id="viewModeBtn"><i class="fa-solid fa-desktop"></i> ভিউ মোড</button>
         </div>
 
-        <!-- Dashboard Square Cards (Stats) -->
-        <div class="dashboard-grid">
-            <div class="stat-card">
-                <div class="stat-circle" id="totalProdCount">০</div>
-                <h3>প্রডাক্ট</h3>
-            </div>
-            <div class="stat-card">
-                <div class="stat-circle" id="liveProdCount" style="background: #e1fef0; color: #28a745; border-color: #28a745;">০</div>
-                <h3>লাইভ</h3>
-            </div>
-            <div class="stat-card">
-                <div class="stat-circle" id="orderCount" style="background: #fff3cd; color: #ffc107; border-color: #ffc107;">০</div>
-                <h3>অর্ডার</h3>
-            </div>
-            <div class="stat-card">
-                <div class="stat-circle" id="userCount" style="background: #f8d7da; color: #dc3545; border-color: #dc3545;">১</div>
-                <h3>ইউজার</h3>
-            </div>
-        </div>
-
-        <!-- FIRST SQUARE CARDS CONTAINER: Product Management -->
-        <div class="square-menu-grid">
-            <div class="square-menu-card" id="menuAddProd" onclick="toggleSubPanel('panelAddProduct')">
-                <i class="fa-solid fa-square-plus"></i>
-                <span>নতুন পণ্য যোগ</span>
-            </div>
-            <div class="square-menu-card" id="menuCustProd" onclick="toggleSubPanel('panelCustomizeProduct')">
-                <i class="fa-solid fa-boxes-stacked"></i>
-                <span>পণ্য কাস্টমাইজ</span>
-            </div>
-        </div>
-
-        <!-- PANEL 1: নতুন পণ্য যোগ (With Live Preview) -->
-        <div class="admin-card" id="panelAddProduct">
-            <h2>➕ নতুন পণ্য যোগ করুন <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
-            <div class="form-group">
-                <label>পণ্যের টাইটেল (বাংলা):</label>
-                <input type="text" id="newTitleBn" placeholder="যেমন: প্রিমিয়াম লেদার জুতো" oninput="updateProductPreview()">
-            </div>
-            <div class="form-group">
-                <label>পণ্যের বিবরণ (Description):</label>
-                <textarea id="newDesc" placeholder="পণ্যের বিস্তারিত বিবরণ..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>ছবির লিংক (Image URL):</label>
-                <input type="text" id="newImg" placeholder="https://..." oninput="updateProductPreview()">
-            </div>
-            <div class="form-group">
-                <label>নির্দিষ্ট ক্যাটাগরি:</label>
-                <select id="newCategory">
-                    <option value="sneakers">স্নেকার্স (Sneakers)</option>
-                    <option value="gadgets">গ্যাজেটস (Gadgets)</option>
-                    <option value="fashion">ফ্যাশন (Fashion)</option>
-                    <option value="foods">ফুডস (Foods)</option>
-                </select>
-            </div>
-            <div style="display: flex; gap: 4px;">
-                <div class="form-group" style="flex:1;">
-                    <label>বর্তমান দাম:</label>
-                    <input type="text" id="newPrice" placeholder="৳ ২৮৫০" oninput="updateProductPreview()">
-                </div>
-                <div class="form-group" style="flex:1;">
-                    <label>পূর্বের মূল্য:</label>
-                    <input type="text" id="newOldPrice" placeholder="৳ ৩৬০০">
+        <!-- Welcome Card Banner -->
+        <div class="welcome-card">
+            <div class="welcome-left">
+                <div class="welcome-avatar-icon"><i class="fa-solid fa-user-tie"></i></div>
+                <div class="welcome-text">
+                    <h3>স্বাগতম, অ্যাডমিন 👋</h3>
+                    <p>আপনার ওয়েবসাইটের সারসংক্ষেপ</p>
                 </div>
             </div>
-            <div style="display: flex; gap: 4px;">
-                <div class="form-group" style="flex:1;">
-                    <label>ডিসকাউন্ট (%):</label>
-                    <input type="text" id="newDisc" placeholder="-21%">
+            <div class="status-pill">
+                <i class="fa-solid fa-circle" style="font-size: 7px;"></i> সিস্টেম প্রস্তুত
+            </div>
+        </div>
+
+        <!-- Top 3 Stat Cards -->
+        <div class="stats-grid-3">
+            <div class="stat-card" onclick="openPanel('panelProducts')">
+                <div class="stat-icon-box" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-box"></i></div>
+                <h4>প্রোডাক্টসমূহ</h4>
+                <div class="stat-val" id="countProducts">৪১</div>
+            </div>
+            <div class="stat-card" onclick="openPanel('panelOrders')">
+                <div class="stat-icon-box" style="background:#fef3c7; color:#d97706;"><i class="fa-solid fa-cart-shopping"></i></div>
+                <h4>অর্ডার <span id="orderBlinkBadge" class="blink-badge" style="display:none;">১</span></h4>
+                <div class="stat-val" id="countOrders">১</div>
+            </div>
+            <div class="stat-card" onclick="openPanel('panelBanners')">
+                <div class="stat-icon-box" style="background:#f3e8ff; color:#9333ea;"><i class="fa-solid fa-images"></i></div>
+                <h4>ব্যানার</h4>
+                <div class="stat-val" id="countBanners">১৪</div>
+            </div>
+        </div>
+
+        <!-- Section: Banner Management -->
+        <div class="section-title-bar">
+            <span>⚡ ব্যানার ম্যানেজমেন্ট</span>
+            <span class="action-link" onclick="openPanel('panelBanners')">সব দেখুন ></span>
+        </div>
+        <div class="grid-cards-2x2">
+            <div class="management-card" onclick="openPanel('panelAddBanner')">
+                <div class="mgmt-icon-box"><i class="fa-solid fa-image"></i></div>
+                <div class="mgmt-info"><span>নতুন ব্যানার যোগ</span></div>
+            </div>
+            <div class="management-card" onclick="openPanel('panelCustomizeBanners')">
+                <div class="mgmt-icon-box" style="background:#fae8ff; color:#9333ea;"><i class="fa-solid fa-sliders"></i></div>
+                <div class="mgmt-info"><span>ব্যানার কাস্টমাইজ</span></div>
+            </div>
+        </div>
+
+        <!-- Section: Quick Access -->
+        <div class="section-title-bar">
+            <span>⭐ দ্রুত অ্যাক্সেস</span>
+            <span class="action-link" onclick="openPanel('panelUsers')">সব ফিচার ></span>
+        </div>
+        <div class="quick-access-4">
+            <div class="quick-card" onclick="openPanel('panelUsers')">
+                <i class="fa-solid fa-users"></i>
+                <span>ইউজার</span>
+            </div>
+            <div class="quick-card" onclick="openPanel('panelAdmins')">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>এডমিন</span>
+            </div>
+            <div class="quick-card" onclick="openPanel('panelProducts')">
+                <i class="fa-solid fa-box-open"></i>
+                <span>প্রোডাক্ট</span>
+            </div>
+            <div class="quick-card" onclick="openPanel('panelOrders')">
+                <i class="fa-solid fa-receipt"></i>
+                <span>অর্ডার</span>
+            </div>
+        </div>
+
+        <!-- Section: Management -->
+        <div class="section-title-bar">
+            <span>⚙️ ম্যানেজমেন্ট</span>
+        </div>
+        <div class="grid-cards-2x2">
+            <div class="management-card" onclick="openPanel('panelAddProduct')">
+                <div class="mgmt-icon-box" style="background:#dcfce7; color:#15803d;"><i class="fa-solid fa-square-plus"></i></div>
+                <div class="mgmt-info"><span>প্রোডাক্ট যোগ</span></div>
+            </div>
+            <div class="management-card" onclick="openPanel('panelCustomizeProduct')">
+                <div class="mgmt-icon-box" style="background:#ffedd5; color:#c2410c;"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div class="mgmt-info"><span>প্রোডাক্ট কাস্টমাইজ</span></div>
+            </div>
+            <div class="management-card" onclick="openPanel('panelSiteConfig')">
+                <div class="mgmt-icon-box" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-sliders"></i></div>
+                <div class="mgmt-info"><span>সাইট কনফিগার</span></div>
+            </div>
+            <div class="management-card" onclick="openPanel('panelSiteSettings')">
+                <div class="mgmt-icon-box" style="background:#e0e7ff; color:#4338ca;"><i class="fa-solid fa-gear"></i></div>
+                <div class="mgmt-info"><span>সাইট সেটিংস</span></div>
+            </div>
+        </div>
+
+        <!-- Live Activity Card (Screenshot Match) -->
+        <div class="live-activity-card">
+            <div class="live-activity-header">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <i class="fa-solid fa-wave-square" style="color:var(--primary-color);"></i>
+                    <span>লাইভ অ্যাক্টিভিটি</span>
                 </div>
-                <div class="form-group" style="flex:1;">
-                    <label>এভেইলেবল সাইজ:</label>
-                    <input type="text" id="newSize" placeholder="40, 41, 42, 43">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="live-badge-demo">● LIVE DEMO</span>
+                    <span style="font-size:10px; color:var(--primary-color); cursor:pointer;"><i class="fa-solid fa-rotate"></i> রিফ্রেশ</span>
                 </div>
-            </div>
-
-            <!-- Live Preview Area -->
-            <div class="preview-box">
-                <h4>👁️ পণ্যের লাইভ প্রিভিউ:</h4>
-                <div id="productPreviewContent" style="font-size: 10px;">টাইটেল বা দাম লিখলে এখানে প্রিভিউ দেখা যাবে...</div>
-            </div>
-
-            <button onclick="addNewProductToFirebase()" class="btn-submit">🚀 সার্ভারে আপডেট করুন</button>
-        </div>
-
-        <!-- PANEL 2: পণ্য কাস্টমাইজ (Edit, Show/Hide, Delete with Confirmation) -->
-        <div class="admin-card" id="panelCustomizeProduct">
-            <h2>⚙️ পণ্য কাস্টমাইজ ও স্টক কন্ট্রোল <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
-            <div id="adminProductList">
-                <p style="font-size: 10px; color: var(--text-muted);">ডাটা লোড হচ্ছে...</p>
-            </div>
-        </div>
-
-        <!-- SECOND SQUARE CARDS CONTAINER: Configuration & Banners -->
-        <div class="square-menu-grid">
-            <div class="square-menu-card" id="menuConfig" onclick="toggleSubPanel('panelConfiguration')">
-                <i class="fa-solid fa-gears"></i>
-                <span>কনফিগারেশন</span>
-            </div>
-            <div class="square-menu-card" id="menuBanners" onclick="toggleSubPanel('panelBannerControl')">
-                <i class="fa-solid fa-images"></i>
-                <span>ব্যানার কন্ট্রোল</span>
-            </div>
-        </div>
-
-        <!-- PANEL 3: কনফিগারেশন (Site settings & Shortcut Menus Edit & Save) -->
-        <div class="admin-card" id="panelConfiguration">
-            <h2>🛠️ কনফিগারেশন ও শর্টকাট মেনু <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
-            <div class="form-group">
-                <label>সাইটের নাম:</label>
-                <input type="text" id="confSiteName" value="সেলার ভাই">
-            </div>
-            <div class="form-group">
-                <label>ট্যাগলাইন:</label>
-                <input type="text" id="confTagline" value="আসল পণ্য, আস্থার ঠিকানা">
-            </div>
-            <div class="form-group">
-                <label>ফোন কল নাম্বার:</label>
-                <input type="text" id="confPhone" value="01567856878">
             </div>
             
-            <h3 style="font-size: 10px; font-weight: 700; color: var(--primary-color); margin: 6px 0 3px 0;">🔗 শর্টকাট মেনু কন্ট্রোল (আইকন ও নাম):</h3>
-            <div id="adminShortcutList">
-                <!-- Loaded dynamically -->
-            </div>
-
-            <button onclick="saveSiteConfig()" class="btn-submit" style="background: var(--primary-color);">💾 কনফিগারেশন সেভ করুন</button>
-        </div>
-
-        <!-- PANEL 4: ব্যানার কন্ট্রোল (নতুন ব্যানার যোগ, লাইভ প্রিভিউ, ব্যানার কাস্টমাইজ ও হাইড/শো) -->
-        <div class="admin-card" id="panelBannerControl">
-            <h2>🎨 ব্যানার কন্ট্রোল ও ম্যানেজমেন্ট <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeAllPanels()"></i></h2>
-            
-            <div style="background: #f8f9fa; padding: 8px; border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border-color);">
-                <h3 style="font-size: 10px; font-weight: 700; color: var(--primary-color); margin-bottom: 4px;">➕ নতুন ব্যানার যোগ করুন</h3>
-                <div class="form-group">
-                    <label>ব্যানার ট্যাগ:</label>
-                    <input type="text" id="bannerTag" placeholder="ট্যাগ লিখুন" oninput="updateBannerPreview()">
-                </div>
-                <div class="form-group">
-                    <label>ব্যানার টাইটেল:</label>
-                    <input type="text" id="bannerTitle" placeholder="টাইটেল লিখুন" oninput="updateBannerPreview()">
-                </div>
-                <div class="form-group">
-                    <label>ছবির ব্যাকগ্রাউন্ড লিংক (Image URL):</label>
-                    <input type="text" id="bannerBg" placeholder="https://..." oninput="updateBannerPreview()">
-                </div>
-                <div class="form-group">
-                    <label>টার্গেটেড লিংক:</label>
-                    <input type="text" id="bannerTarget" placeholder="sneakers">
-                </div>
-
-                <!-- Banner Live Preview -->
-                <div class="preview-box">
-                    <h4>👁️ লাইভ প্রিভিউ:</h4>
-                    <div id="bannerPreviewContainer" style="height: 60px; border-radius: 4px; background-size: cover; background-position: center; color: white; padding: 6px; display: flex; flex-direction: column; justify-content: flex-end; background-color: #333;">
-                        <span id="prevTag" style="background:#ffc107; color:#000; font-size:7px; font-weight:700; padding:1px 3px; border-radius:2px; display:inline-block; width:fit-content; margin-bottom:1px;">ট্যাগ</span>
-                        <h4 id="prevTitle" style="font-size:10px; font-weight:700; margin:0;">ব্যানার টাইটেল</h4>
+            <div class="activity-row-item">
+                <div class="act-left">
+                    <div class="act-icon-circle" style="background:#dcfce7; color:#15803d;"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div class="act-details">
+                        <b>নতুন অর্ডার তৈরি হয়েছে</b>
+                        <span>অর্ডার #SV1001 · ডেসো কার্যকৃম</span>
                     </div>
                 </div>
-
-                <button onclick="addNewBannerToFirebase()" class="btn-submit" style="background: #17a2b8;">✨ ব্যানার সার্ভারে সেভ করুন</button>
+                <div class="act-time">এখন</div>
             </div>
 
-            <h3 style="font-size: 10px; font-weight: 700; margin: 6px 0 4px 0; color: var(--primary-color);">📋 ব্যানার কাস্টমাইজ ও হাইড/শো</h3>
-            <div id="adminBannerList">
-                <p style="font-size: 10px; color: var(--text-muted);">ব্যানার লোড হচ্ছে...</p>
+            <div class="activity-row-item">
+                <div class="act-left">
+                    <div class="act-icon-circle" style="background:#e0f2fe; color:#0284c7;"><i class="fa-solid fa-user-plus"></i></div>
+                    <div class="act-details">
+                        <b>নতুন ইউজার রেজিস্ট্রেশন</b>
+                        <span>নতুন সদস্য · ডেসো কার্যকৃম</span>
+                    </div>
+                </div>
+                <div class="act-time">২ মিনিট</div>
+            </div>
+
+            <div class="activity-row-item">
+                <div class="act-left">
+                    <div class="act-icon-circle" style="background:#ffedd5; color:#c2410c;"><i class="fa-solid fa-box-open"></i></div>
+                    <div class="act-details">
+                        <b>প্রোডাক্ট তালিকা আপডেট</b>
+                        <span>প্রোডাক্ট ম্যানেজমেন্ট · ডেসো কার্যকৃম</span>
+                    </div>
+                </div>
+                <div class="act-time">৬ মিনিট</div>
+            </div>
+
+            <div class="activity-row-item">
+                <div class="act-left">
+                    <div class="act-icon-circle" style="background:#f3e8ff; color:#9333ea;"><i class="fa-solid fa-images"></i></div>
+                    <div class="act-details">
+                        <b>ব্যানার ম্যানেজমেন্ট</b>
+                        <span>ব্যানার সেকশন · ডেসো কার্যকৃম</span>
+                    </div>
+                </div>
+                <div class="act-time">৮ মিনিট</div>
+            </div>
+
+            <div class="activity-footer-btn" onclick="alert('সকল লাইভ অ্যাক্টিভিটি লোড হচ্ছে...')">
+                ডেসো কার্যকৃম বিস্তারিত করুন
             </div>
         </div>
 
     </div>
 
-    <!-- DELETE CONFIRMATION POPUP MODAL -->
+    <!-- ================= FULLSCREEN PANELS ================= -->
+
+    <div class="fullscreen-panel" id="panelProducts">
+        <div class="panel-header"><h2>📦 সকল পণ্যসমূহ</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="fullProductsList"><p style="font-size: 11px; color: var(--text-muted);">লোড হচ্ছে...</p></div>
+    </div>
+
+    <div class="fullscreen-panel" id="panelOrders">
+        <div class="panel-header"><h2>📥 কাস্টমার অর্ডার ও স্টক ভেরিফিকেশন</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="fullOrdersList"><p style="font-size: 11px; color: var(--text-muted);">অর্ডার লোড হচ্ছে...</p></div>
+    </div>
+
+    <div class="fullscreen-panel" id="panelBanners">
+        <div class="panel-header"><h2>🎨 ব্যানার লিস্ট</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="fullBannersList"><p style="font-size: 11px; color: var(--text-muted);">ব্যানার লোড হচ্ছে...</p></div>
+    </div>
+
+    <div class="fullscreen-panel" id="panelAddBanner">
+        <div class="panel-header"><h2>➕ নতুন ব্যানার যোগ করুন</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div class="form-group"><label>ব্যানার ট্যাগ:</label><input type="text" id="bannerTag" placeholder="ট্যাগ লিখুন" oninput="updateBannerPreview()"></div>
+        <div class="form-group"><label>ব্যানার টাইটেল:</label><input type="text" id="bannerTitle" placeholder="টাইটেল লিখুন" oninput="updateBannerPreview()"></div>
+        <div class="form-group"><label>ব্যানার বিবরণ (Description):</label><textarea id="bannerDesc" placeholder="ব্যানারের বিস্তারিত বিবরণ..." oninput="updateBannerPreview()"></textarea></div>
+        <div class="form-group"><label>ছবির ব্যাকগ্রাউন্ড লিংক (URL):</label><input type="text" id="bannerBg" placeholder="https://..." oninput="updateBannerPreview()"></div>
+        <div class="form-group"><label>টার্গেটেড লিংক:</label><input type="text" id="bannerTarget" placeholder="sneakers"></div>
+        <div class="preview-box" style="background:#f8f9fa; border:1px dashed var(--primary-color); border-radius:8px; padding:8px; margin-top:8px;">
+            <h4 style="font-size:10px; color:var(--primary-color); margin-bottom:4px;">👁️ লাইভ প্রিভিউ:</h4>
+            <div id="bannerPreviewContainer" style="height: 70px; border-radius: 6px; background-size: cover; background-position: center; color: white; padding: 8px; display: flex; flex-direction: column; justify-content: flex-end; background-color: #333;">
+                <span id="prevTag" style="background:#ffc107; color:#000; font-size:9px; font-weight:700; padding:1px 4px; border-radius:3px; display:inline-block; width:fit-content; margin-bottom:2px;">ট্যাগ</span>
+                <h4 id="prevTitle" style="font-size:11px; font-weight:700; margin:0;">ব্যানার টাইটেল</h4>
+            </div>
+        </div>
+        <button onclick="addNewBannerToFirebase()" class="btn-submit" style="background: #17a2b8;">✨ ব্যানার সার্ভারে সেভ করুন</button>
+    </div>
+
+    <div class="fullscreen-panel" id="panelCustomizeBanners">
+        <div class="panel-header"><h2>⚙️ ব্যানার কাস্টমাইজ ও স্ট্যাটাস</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="customizeBannersList"><p style="font-size: 11px; color: var(--text-muted);">ব্যানার লোড হচ্ছে...</p></div>
+    </div>
+
+    <div class="fullscreen-panel" id="panelUsers">
+        <div class="panel-header"><h2>👥 সাইট ইউজার লিস্ট</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="fullUsersList"><p style="font-size: 11px; color: var(--text-muted);">ইউজার লোড হচ্ছে...</p></div>
+    </div>
+
+    <div class="fullscreen-panel" id="panelAdmins">
+        <div class="panel-header"><h2>🛡️ এডমিন লিস্ট</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div style="background:#fafafa; padding:10px; border-radius:8px; font-size:11px;">
+            <div class="admin-item-row">
+                <div><b>SV Controller Admin</b><br><span style="color:var(--text-muted);">superadmin@salervai.com</span></div>
+                <span class="btn-primary-sm" style="background:#28a745;">অ্যাক্টিভ</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW PRODUCT ADD PANEL (With Brand & Description) -->
+    <div class="fullscreen-panel" id="panelAddProduct">
+        <div class="panel-header"><h2>➕ নতুন প্রডাক্ট যোগ করুন</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div class="form-group"><label>পণ্যের নাম (বাংলা):</label><input type="text" id="newTitleBn" placeholder="যেমন: প্রিমিয়াম জুতো" oninput="updateAddPreview()"></div>
+        <div class="form-group"><label>ব্র্যান্ড (Brand):</label><input type="text" id="newBrand" placeholder="যেমন: Nike, Apex, Walton" oninput="updateAddPreview()"></div>
+        <div class="form-group"><label>বিবরণ (Description):</label><textarea id="newDesc" placeholder="বিস্তারিত বিবরণ..." oninput="updateAddPreview()"></textarea></div>
+        <div class="form-group"><label>ছবির লিংক (URL):</label><input type="text" id="newImg" placeholder="https://..." oninput="updateAddPreview()"></div>
+        <div class="form-group"><label>ক্যাটাগরি নির্বাচন:</label>
+            <select id="newCategory">
+                <option value="sneakers">স্নেকার্স</option>
+                <option value="gadgets">গ্যাজেটস</option>
+                <option value="fashion">ফ্যাশন</option>
+                <option value="foods">ফুডস</option>
+            </select>
+        </div>
+        <div class="form-group"><label>টার্গেটেড লিংক:</label><input type="text" id="newTargetLink" placeholder="যেমন: /sneakers/nike-01"></div>
+        <div style="display:flex; gap:8px;">
+            <div class="form-group" style="flex:1;"><label>দাম:</label><input type="text" id="newPrice" placeholder="৳ ২৮৫০" oninput="updateAddPreview()"></div>
+            <div class="form-group" style="flex:1;"><label>পূর্বের মূল্য:</label><input type="text" id="newOldPrice" placeholder="৳ ৩৬০০"></div>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <div class="form-group" style="flex:1;"><label>ডিসকাউন্ট:</label><input type="text" id="newDisc" placeholder="-21%"></div>
+            <div class="form-group" style="flex:1;"><label>সাইজ:</label><input type="text" id="newSize" placeholder="40, 41, 42"></div>
+        </div>
+        <div class="preview-box" style="background:#f8f9fa; border:1px dashed var(--primary-color); border-radius:8px; padding:8px; margin-top:8px;">
+            <h4 style="font-size:10px; color:var(--primary-color); margin-bottom:3px;">👁️ লাইভ প্রিভিউ:</h4>
+            <div id="addPreviewContent" style="font-size: 10px;">তথ্য লিখলে এখানে প্রিভিউ দেখা যাবে...</div>
+        </div>
+        <button onclick="addNewProductToFirebase()" class="btn-submit">🚀 সার্ভারে সেভ করুন</button>
+    </div>
+
+    <!-- PRODUCT CUSTOMIZE PANEL -->
+    <div class="fullscreen-panel" id="panelCustomizeProduct">
+        <div class="panel-header"><h2>⚙️ প্রডাক্ট কাস্টমাইজ ও স্টক মার্কিং</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="customizeProductsList"><p style="font-size: 11px; color: var(--text-muted);">লোড হচ্ছে...</p></div>
+    </div>
+
+    <!-- SITE CONFIG PANEL -->
+    <div class="fullscreen-panel" id="panelSiteConfig">
+        <div class="panel-header"><h2>🛠️ সাইট কনফিগারেশন ও শর্টকাট মেনু</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div class="form-group"><label>সাইটের নাম:</label><input type="text" id="confSiteName" value="সেলার ভাই"></div>
+        <div class="form-group"><label>ট্যাগলাইন:</label><input type="text" id="confTagline" value="আসল পণ্য, আস্থার ঠিকানা"></div>
+        <div class="form-group"><label>লোগো লিংক (Logo URL):</label><input type="text" id="confLogo" placeholder="https://..."></div>
+        
+        <h3 style="font-size: 12px; font-weight: 700; color: var(--primary-color); margin: 12px 0 6px 0;">🔗 ফ্রন্টএন্ড শর্টকাট মেনু কন্ট্রোল (আইকন ও নাম):</h3>
+        <div id="adminShortcutList"></div>
+
+        <button onclick="saveSiteConfig()" class="btn-submit" style="background:var(--primary-color); margin-top:12px;">💾 কনফিগারেশন সেভ করুন</button>
+    </div>
+
+    <div class="fullscreen-panel" id="panelSiteSettings">
+        <div class="panel-header"><h2>⚙️ ফায়ারবেজ সাইট সেটিংস</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div class="form-group"><label>হোমপেজ লেআউট কন্ট্রোল:</label><input type="text" id="setHomeLayout" value="Grid & Carousel Standard"></div>
+        <div class="form-group"><label>প্রোফাইল পেজ কন্ট্রোল:</label><input type="text" id="setProfileCtrl" value="Enabled Order & Wallet"></div>
+        <div class="form-group"><label>ইউজার প্রোফাইলে নতুন মেনু:</label><input type="text" id="setUserMenu" value="Affiliate & Cashback"></div>
+        <button onclick="saveSiteSettings()" class="btn-submit" style="background:var(--primary-color);">💾 সেভ টু ফায়ারস্টোর</button>
+    </div>
+
+    <div class="fullscreen-panel" id="panelLiveChat">
+        <div class="panel-header"><h2>💬 কাস্টমার লাইভ চ্যাট</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="liveChatMessagesList"><p style="font-size: 11px; color: var(--text-muted);">কোনো নতুন মেসেজ নেই।</p></div>
+    </div>
+
+    <div class="fullscreen-panel" id="panelPreOrder">
+        <div class="panel-header"><h2>📌 প্রি-অর্ডার রিকুয়েষ্ট লিস্ট</h2><button class="btn-danger" onclick="closeAllPanels()">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <div id="preOrderRequestsList"><p style="font-size: 11px; color: var(--text-muted);">কোনো প্রি-অর্ডার নেই।</p></div>
+    </div>
+
+    <!-- ================= BOTTOM NAVIGATION BAR (Matched Screenshot) ================= -->
+    <div class="bottom-nav">
+        <div class="bottom-nav-item" onclick="openPanel('panelLiveChat')">
+            <i class="fa-solid fa-headset blink-red" id="chatNavIcon"></i>
+            <span>লাইভ চ্যাট</span>
+        </div>
+        <div class="bottom-nav-item" onclick="openPanel('panelOrders')">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>অর্ডার হিস্ট্রি</span>
+        </div>
+        <div class="bottom-nav-item" onclick="openPanel('panelPreOrder')">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <span>প্রি-অর্ডার</span>
+        </div>
+    </div>
+
+    <!-- EDIT PRODUCT MODAL -->
+    <div class="fullscreen-panel" id="panelEditProductForm">
+        <div class="panel-header"><h2>✏️ প্রডাক্ট এডিট ও লাইভ প্রিভিউ</h2><button class="btn-danger" onclick="document.getElementById('panelEditProductForm').classList.remove('active')">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <input type="hidden" id="editProdId">
+        <div class="form-group"><label>নাম:</label><input type="text" id="editTitleBn" oninput="updateEditPreview()"></div>
+        <div class="form-group"><label>ব্র্যান্ড:</label><input type="text" id="editBrand" oninput="updateEditPreview()"></div>
+        <div class="form-group"><label>বিবরণ:</label><textarea id="editDesc" oninput="updateEditPreview()"></textarea></div>
+        <div class="form-group"><label>ছবির লিংক:</label><input type="text" id="editImg" oninput="updateEditPreview()"></div>
+        <div class="form-group"><label>ক্যাটাগরি:</label>
+            <select id="editCategory" onchange="updateEditPreview()">
+                <option value="sneakers">স্নেকার্স</option>
+                <option value="gadgets">গ্যাজেটস</option>
+                <option value="fashion">ফ্যাশন</option>
+                <option value="foods">ফুডস</option>
+            </select>
+        </div>
+        <div class="form-group"><label>টার্গেটেড লিংক:</label><input type="text" id="editTargetLink"></div>
+        <div class="form-group"><label>দাম:</label><input type="text" id="editPrice" oninput="updateEditPreview()"></div>
+        <div class="form-group">
+            <label><input type="checkbox" id="editStockOutMark"> স্টক আউট (Stock Out) হিসেবে মার্ক করুন</label>
+        </div>
+        <div class="preview-box" style="background:#f8f9fa; border:1px dashed var(--primary-color); border-radius:8px; padding:8px; margin-top:8px;">
+            <h4 style="font-size:10px; color:var(--primary-color); margin-bottom:3px;">👁️ লাইভ প্রিভিউ:</h4>
+            <div id="editPreviewContent" style="font-size: 10px;"></div>
+        </div>
+        <button onclick="saveEditedProduct()" class="btn-submit">💾 পরিবর্তন সেভ করুন</button>
+    </div>
+
+    <!-- EDIT BANNER MODAL -->
+    <div class="fullscreen-panel" id="panelEditBannerForm">
+        <div class="panel-header"><h2>✏️ ব্যানার এডিট ও প্রিভিউ</h2><button class="btn-danger" onclick="document.getElementById('panelEditBannerForm').classList.remove('active')">বন্ধ <i class="fa-solid fa-xmark"></i></button></div>
+        <input type="hidden" id="editBannerId">
+        <div class="form-group"><label>ব্যানার ট্যাগ:</label><input type="text" id="editBannerTag" oninput="updateEditBannerPreview()"></div>
+        <div class="form-group"><label>ব্যানার টাইটেল:</label><input type="text" id="editBannerTitle" oninput="updateEditBannerPreview()"></div>
+        <div class="form-group"><label>ব্যানার বিবরণ (Description):</label><textarea id="editBannerDesc" oninput="updateEditBannerPreview()"></textarea></div>
+        <div class="form-group"><label>ছবির ব্যাকগ্রাউন্ড লিংক:</label><input type="text" id="editBannerBg" oninput="updateEditBannerPreview()"></div>
+        <div class="form-group"><label>টার্গেটেড লিংক:</label><input type="text" id="editBannerTarget"></div>
+        <div class="preview-box" style="background:#f8f9fa; border:1px dashed var(--primary-color); border-radius:8px; padding:8px; margin-top:8px;">
+            <h4 style="font-size:10px; color:var(--primary-color); margin-bottom:3px;">👁️ লাইভ প্রিভিউ:</h4>
+            <div id="editBannerPreviewContent" style="height: 70px; border-radius: 6px; background-size: cover; background-position: center; color: white; padding: 8px; display: flex; flex-direction: column; justify-content: flex-end; background-color: #333;">
+                <span id="prevEditTag" style="background:#ffc107; color:#000; font-size:9px; font-weight:700; padding:1px 4px; border-radius:3px; display:inline-block; width:fit-content; margin-bottom:2px;">ট্যাগ</span>
+                <h4 id="prevEditTitle" style="font-size:11px; font-weight:700; margin:0;">টাইটেল</h4>
+            </div>
+        </div>
+        <button onclick="saveEditedBanner()" class="btn-submit">💾 ব্যানার আপডেট করুন</button>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
     <div class="modal-overlay" id="deleteConfirmModal">
         <div class="modal-card">
             <h3>⚠️ নিশ্চিতকরণ</h3>
-            <p>আপনি কি সত্যি এই পণ্যটি মুছে ফেলতে চান?</p>
-            <div style="display: flex; gap: 6px;">
-                <button class="btn-danger" style="flex:1; padding: 6px;" onclick="executeDeleteProduct()">হ্যাঁ, ডিলিট করুন</button>
-                <button class="btn-warning" style="flex:1; padding: 6px;" onclick="closeDeleteModal()">বাতিল</button>
+            <p>আপনি কি সত্যি এটি ডিলিট করতে চান?</p>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-danger" style="flex:1; padding:8px;" onclick="executeDelete()">হ্যাঁ, ডিলিট</button>
+                <button class="btn-warning" style="flex:1; padding:8px;" onclick="document.getElementById('deleteConfirmModal').style.display='none'">বাতিল</button>
             </div>
         </div>
     </div>
 
     <script>
-        let productToDeleteId = null;
+        let deleteTargetId = null;
+        let deleteTargetCol = null;
 
-        // 1. Admin Login Control
         function handleAdminLogin() {
-            let user = document.getElementById('adminUser').value.trim();
-            let pass = document.getElementById('adminPass').value.trim();
-
-            if(user === "SVADMIN" && pass === "SVADMIN") {
+            let u = document.getElementById('adminUser').value.trim();
+            let p = document.getElementById('adminPass').value.trim();
+            if(u === "SVADMIN" && p === "SVADMIN") {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'flex';
-                loadAdminData();
-            } else {
-                alert("❌ ভুল ইউজারনেম অথবা পাসওয়ার্ড!");
-            }
-        }
-
-        function logoutAdmin() {
-            document.getElementById('adminDashboard').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-        }
-
-        // Toggle Sub-panels (Click only opens, initially all closed)
-        function toggleSubPanel(panelId) {
-            let panels = ['panelAddProduct', 'panelCustomizeProduct', 'panelConfiguration', 'panelBannerControl'];
-            let menus = {
-                'panelAddProduct': 'menuAddProd',
-                'panelCustomizeProduct': 'menuCustProd',
-                'panelConfiguration': 'menuConfig',
-                'panelBannerControl': 'menuBanners'
-            };
-
-            panels.forEach(id => {
-                let p = document.getElementById(id);
-                let m = document.getElementById(menus[id]);
-                if(id === panelId) {
-                    let isOpen = p.classList.contains('active-panel');
-                    if(isOpen) {
-                        p.classList.remove('active-panel');
-                        m.classList.remove('active');
-                    } else {
-                        p.classList.add('active-panel');
-                        m.classList.add('active');
-                    }
-                } else {
-                    p.classList.remove('active-panel');
-                    m.classList.remove('active');
-                }
-            });
-        }
-
-        function closeAllPanels() {
-            let panels = ['panelAddProduct', 'panelCustomizeProduct', 'panelConfiguration', 'panelBannerControl'];
-            let menus = ['menuAddProd', 'menuCustProd', 'menuConfig', 'menuBanners'];
-            panels.forEach(id => document.getElementById(id).classList.remove('active-panel'));
-            menus.forEach(id => document.getElementById(id).classList.remove('active'));
-        }
-
-        // 2. Load Dashboard Stats & Server Data
-        async function loadAdminData() {
-            try {
-                // Products Data
-                let prodSnapshot = await db.collection("products").get();
-                let totalProducts = prodSnapshot.size;
-                document.getElementById('totalProdCount').innerText = totalProducts;
-                document.getElementById('liveProdCount').innerText = totalProducts;
-
-                let prodListContainer = document.getElementById('adminProductList');
-                prodListContainer.innerHTML = '';
-                
-                prodSnapshot.forEach(doc => {
-                    let p = doc.data();
-                    let pId = doc.id;
-                    let title = p.name ? (p.name.bn || p.name) : 'প্রডাক্ট';
-                    let isHidden = p.hidden || false;
-                    
-                    prodListContainer.innerHTML += `
-                        <div class="admin-item-row" id="prod-row-${pId}">
-                            <div><b>${title}</b><br><span style="color:var(--text-muted);">${p.price || '৳০'}</span></div>
-                            <div style="display:flex; gap:3px;">
-                                <button class="btn-warning" onclick="toggleProductVisibility('${pId}', ${isHidden})">${isHidden ? 'শো' : 'হাইড'}</button>
-                                <button class="btn-danger" onclick="openDeleteModal('${pId}')">ডিলিট</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                // Orders Count
-                let orderSnapshot = await db.collection("orders").get();
-                document.getElementById('orderCount').innerText = orderSnapshot.size;
-
-                // Banners & Config Data
-                loadAdminBanners();
+                initRealtimeSync();
                 loadAdminShortcuts();
+            } else {
+                alert("❌ ভুল ইউজারনেম বা পাসওয়ার্ড!");
+            }
+        }
+        function logoutAdmin() { location.reload(); }
 
-            } catch (error) {
-                console.error("ডাটা লোড করতে সমস্যা:", error);
+        function toggleHamburger() { document.getElementById('hamburgerDrawer').classList.toggle('open'); }
+        function openPanel(id) { closeAllPanels(); document.getElementById(id).classList.add('active'); }
+        function closeAllPanels() {
+            let panels = ['panelProducts', 'panelOrders', 'panelBanners', 'panelAddBanner', 'panelCustomizeBanners', 'panelUsers', 'panelAdmins', 'panelAddProduct', 'panelCustomizeProduct', 'panelSiteConfig', 'panelSiteSettings', 'panelLiveChat', 'panelPreOrder'];
+            panels.forEach(p => document.getElementById(p).classList.remove('active'));
+            document.getElementById('hamburgerDrawer').classList.remove('open');
+        }
+
+        let isViewMode = false;
+        function toggleViewMode() {
+            isViewMode = !isViewMode;
+            let btn = document.getElementById('viewModeBtn');
+            if(isViewMode) {
+                btn.innerHTML = `<i class="fa-solid fa-mobile-screen"></i> এডমিন মোড`;
+                btn.style.background = "#28a745";
+                btn.style.color = "white";
+                alert("মোবাইল ফ্রন্টএন্ড ভিউ মোড চালু হয়েছে।");
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-desktop"></i> ভিউ মোড`;
+                btn.style.background = "#e7f1ff";
+                btn.style.color = "var(--primary-color)";
             }
         }
 
-        // 3. Product Management
-        function updateProductPreview() {
-            let title = document.getElementById('newTitleBn').value || 'পণ্যের নাম';
-            let price = document.getElementById('newPrice').value || '৳ ০';
-            let img = document.getElementById('newImg').value || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100';
-
-            document.getElementById('productPreviewContent').innerHTML = `
-                <div style="display:flex; align-items:center; gap:6px;">
-                    <img src="${img}" style="width:30px; height:30px; object-fit:cover; border-radius:3px;">
-                    <div><b>${title}</b> - <span style="color:var(--primary-color);">${price}</span></div>
-                </div>
-            `;
+        function updateAddPreview() {
+            let t = document.getElementById('newTitleBn').value || 'প্রডাক্ট নাম';
+            let brand = document.getElementById('newBrand').value ? `[ব্র্যান্ড: ${document.getElementById('newBrand').value}]` : '';
+            let d = document.getElementById('newDesc').value || '';
+            let p = document.getElementById('newPrice').value || '৳০';
+            let i = document.getElementById('newImg').value;
+            document.getElementById('addPreviewContent').innerHTML = `<b>${t}</b> ${brand} - ${p}<br><span style="color:#666;">${d}</span><br>${i ? `<img src="${i}" style="width:30px; height:30px; object-fit:cover; margin-top:3px; border-radius:4px;">` : ''}`;
         }
 
-        async function addNewProductToFirebase() {
-            let titleBn = document.getElementById('newTitleBn').value;
-            let desc = document.getElementById('newDesc').value;
-            let img = document.getElementById('newImg').value;
-            let category = document.getElementById('newCategory').value;
-            let price = document.getElementById('newPrice').value;
-            let oldPrice = document.getElementById('newOldPrice').value;
-            let discount = document.getElementById('newDisc').value;
-            let size = document.getElementById('newSize').value;
-
-            if(!titleBn || !price || !img) {
-                alert("দয়া করে নাম, দাম এবং ছবির লিংক দিন।");
-                return;
-            }
-
-            try {
-                await db.collection("products").add({
-                    category: category,
-                    brand: "SALERVAI",
-                    name: { bn: titleBn, en: titleBn },
-                    sub: "General",
-                    price: price,
-                    oldPrice: oldPrice,
-                    numericPrice: parseInt(price.replace(/[^0-9]/g, '')) || 0,
-                    discount: discount || "-10%",
-                    imgs: [img],
-                    hidden: false,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert("✅ পণ্য সফলভাবে সার্ভারে যুক্ত হয়েছে!");
-                loadAdminData();
-                closeAllPanels();
-            } catch (error) {
-                alert("প্রডাক্ট যোগ করতে সমস্যা হয়েছে.");
-            }
-        }
-
-        function openDeleteModal(id) {
-            productToDeleteId = id;
-            document.getElementById('deleteConfirmModal').style.display = 'flex';
-        }
-
-        function closeDeleteModal() {
-            productToDeleteId = null;
-            document.getElementById('deleteConfirmModal').style.display = 'none';
-        }
-
-        async function executeDeleteProduct() {
-            if(!productToDeleteId) return;
-            try {
-                await db.collection("products").doc(productToDeleteId).delete();
-                closeDeleteModal();
-                loadAdminData();
-            } catch (error) {
-                alert("ডিলিট করতে সমস্যা হয়েছে।");
-            }
-        }
-
-        async function toggleProductVisibility(id, currentHidden) {
-            try {
-                await db.collection("products").doc(id).update({ hidden: !currentHidden });
-                loadAdminData();
-            } catch (error) {
-                alert("স্ট্যাটাস পরিবর্তন করতে সমস্যা হয়েছে।");
-            }
-        }
-
-        // 4. Banner Management
         function updateBannerPreview() {
             let tag = document.getElementById('bannerTag').value || 'ট্যাগ';
             let title = document.getElementById('bannerTitle').value || 'ব্যানার টাইটেল';
             let bg = document.getElementById('bannerBg').value;
-
             document.getElementById('prevTag').innerText = tag;
             document.getElementById('prevTitle').innerText = title;
             if(bg) document.getElementById('bannerPreviewContainer').style.backgroundImage = `url('${bg}')`;
         }
 
-        async function addNewBannerToFirebase() {
-            let tag = document.getElementById('bannerTag').value;
-            let title = document.getElementById('bannerTitle').value;
-            let bg = document.getElementById('bannerBg').value;
-            let target = document.getElementById('bannerTarget').value;
-
-            if(!title || !bg) {
-                alert("টাইটেল এবং ব্যাকগ্রাউন্ড লিংক দিন।");
-                return;
-            }
-
-            try {
-                await db.collection("banners").add({
-                    tag: { bn: tag, en: tag },
-                    title: { bn: title, en: title },
-                    bg: bg,
-                    target: target || 'sneakers',
-                    status: 'show',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert("✅ ব্যানার সেভ হয়েছে!");
-                loadAdminBanners();
-            } catch (error) {
-                alert("ব্যানার সেভ করতে সমস্যা হয়েছে।");
-            }
+        function updateEditBannerPreview() {
+            let tag = document.getElementById('editBannerTag').value || 'ট্যাগ';
+            let title = document.getElementById('editBannerTitle').value || 'টাইটেল';
+            let bg = document.getElementById('editBannerBg').value;
+            document.getElementById('prevEditTag').innerText = tag;
+            document.getElementById('prevEditTitle').innerText = title;
+            if(bg) document.getElementById('editBannerPreviewContent').style.backgroundImage = `url('${bg}')`;
         }
 
-        async function loadAdminBanners() {
-            let bannerContainer = document.getElementById('adminBannerList');
-            bannerContainer.innerHTML = '';
-            try {
-                let snap = await db.collection("banners").get();
-                snap.forEach(doc => {
-                    let b = doc.data();
-                    let bId = doc.id;
-                    let titleStr = b.title ? (b.title.bn || b.title) : 'ব্যানার';
-                    let status = b.status || 'show';
+        function initRealtimeSync() {
+            // Products
+            db.collection("products").onSnapshot(snapshot => {
+                let fullList = document.getElementById('fullProductsList');
+                let custList = document.getElementById('customizeProductsList');
+                fullList.innerHTML = ''; custList.innerHTML = '';
+                
+                let count = 0;
+                snapshot.forEach(doc => {
+                    let p = doc.data();
+                    let id = doc.id;
+                    let title = p.name ? (p.name.bn || p.name) : 'প্রডাক্ট';
+                    let brandStr = p.brand ? `[ব্র্যান্ড: ${p.brand}]` : '';
+                    count++;
 
-                    bannerContainer.innerHTML += `
-                        <div class="admin-item-row">
-                            <div><b>${titleStr}</b></div>
-                            <div style="display:flex; gap:3px;">
-                                <button class="btn-warning" onclick="toggleBannerStatus('${bId}', '${status}')">${status === 'hide' ? 'শো' : 'হাইড'}</button>
-                                <button class="btn-danger" onclick="deleteBanner('${bId}')">ডিলিট</button>
+                    fullList.innerHTML += `<div class="admin-item-row"><div><b>${title}</b> ${brandStr}<br><span style="color:var(--text-muted);">${p.price}</span></div><span class="btn-primary-sm">${p.stockStatus || 'এভেইলেবল'}</span></div>`;
+                    
+                    let isStockOut = p.stockStatus === 'Stock Out';
+                    custList.innerHTML += `
+                        <div class="custom-item-card">
+                            <div class="custom-item-header">
+                                <img src="${p.imgs ? p.imgs[0] : ''}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;">
+                                <div>
+                                    <b style="font-size:12px;">${title}</b> ${brandStr}<br>
+                                    <span style="color:var(--primary-color); font-size:11px;">${p.price}</span> ${isStockOut ? '<span style="color:red; font-size:10px;">[স্টক আউট]</span>' : ''}
+                                    <div style="font-size:10px; color:var(--text-muted);">${p.desc || 'কোনো বিবরণ নেই'}</div>
+                                </div>
+                            </div>
+                            <div class="custom-item-actions">
+                                <button class="btn-primary-sm" onclick="openEditProduct('${id}', '${title}', '${p.brand || ''}', '${p.price}', '${p.imgs ? p.imgs[0] : ''}', '${p.desc || ''}', '${p.category || 'sneakers'}', '${p.targetLink || ''}', ${isStockOut})">এডিট</button>
+                                <button class="btn-warning" onclick="toggleHide('${id}', ${p.hidden || false})">${p.hidden ? 'শো' : 'হাইড'}</button>
+                                <button class="btn-danger" onclick="confirmDelete('${id}', 'products')">ডিলিট</button>
                             </div>
                         </div>
                     `;
                 });
-            } catch (error) { console.error(error); }
+                document.getElementById('countProducts').innerText = count;
+            });
+
+            // Orders
+            db.collection("orders").onSnapshot(snapshot => {
+                let fullList = document.getElementById('fullOrdersList');
+                fullList.innerHTML = '';
+                let orderCount = 0;
+                snapshot.forEach(doc => {
+                    let o = doc.data();
+                    orderCount++;
+                    fullList.innerHTML += `
+                        <div style="background:#fafafa; border:1px solid var(--border-color); padding:8px; border-radius:8px; margin-bottom:6px; font-size:11px;">
+                            <div><b>কাস্টমার:</b> ${o.name} (${o.phone})</div>
+                            <div style="margin:4px 0; display:flex; gap:6px;">
+                                <span style="background:#e1fef0; color:#28a745; padding:2px 4px; border-radius:3px;">স্টক ও সাইজ: ঠিক আছে</span>
+                            </div>
+                            <div style="display:flex; gap:6px;">
+                                <button class="btn-primary-sm" style="background:#28a745;" onclick="alert('অর্ডার কনফার্ম!')">কনফার্ম</button>
+                                <button class="btn-warning" onclick="alert('রিপ্লাই পাঠানো হয়েছে!')">স্টক নেই রিপ্লাই</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('countOrders').innerText = orderCount;
+                if(orderCount > 0) {
+                    let badge = document.getElementById('orderBlinkBadge');
+                    badge.style.display = 'inline-block';
+                    badge.innerText = orderCount;
+                }
+            });
+
+            // Banners
+            db.collection("banners").onSnapshot(snapshot => {
+                let fullList = document.getElementById('fullBannersList');
+                let custList = document.getElementById('customizeBannersList');
+                fullList.innerHTML = ''; custList.innerHTML = '';
+                let bCount = 0;
+                
+                snapshot.forEach(doc => {
+                    let b = doc.data();
+                    let bId = doc.id;
+                    bCount++;
+                    let title = b.title ? (b.title.bn || b.title) : 'ব্যানার';
+                    let tag = b.tag ? (b.tag.bn || b.tag) : 'ট্যাগ';
+                    let status = b.status || 'show';
+
+                    fullList.innerHTML += `<div class="admin-item-row"><div><b>${title}</b></div><span class="btn-primary-sm">অ্যাক্টিভ</span></div>`;
+                    
+                    custList.innerHTML += `
+                        <div class="custom-item-card">
+                            <div class="custom-item-header">
+                                <div>
+                                    <span style="background:#ffc107; color:#000; font-size:9px; font-weight:700; padding:2px 5px; border-radius:3px; display:inline-block; margin-bottom:3px;">${tag}</span>
+                                    <b style="font-size:12px; display:block;">${title}</b>
+                                    <span style="font-size:10px; color:var(--text-muted);">বিবরণ: ${b.desc || 'কোনো বিবরণ নেই'}</span><br>
+                                    <span style="font-size:10px; color:var(--text-muted);">টার্গেট: ${b.target || 'N/A'}</span> ${status === 'hide' ? '<span style="color:red; font-size:10px;">[লুকানো]</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="custom-item-actions">
+                                <button class="btn-primary-sm" onclick="openEditBanner('${bId}', '${tag}', '${title}', '${b.desc || ''}', '${b.bg || ''}', '${b.target || ''}')">এডিট</button>
+                                <button class="btn-warning" onclick="toggleBannerStatus('${bId}', '${status}')">${status === 'hide' ? 'শো করুন' : 'হাইড করুন'}</button>
+                                <button class="btn-danger" onclick="confirmDelete('${bId}', 'banners')">ডিলিট</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                document.getElementById('countBanners').innerText = bCount;
+            });
+
+            // Users
+            db.collection("users").onSnapshot(snapshot => {
+                let fullList = document.getElementById('fullUsersList');
+                fullList.innerHTML = '';
+                snapshot.forEach(doc => {
+                    let u = doc.data();
+                    fullList.innerHTML += `
+                        <div class="admin-item-row">
+                            <div><b>${u.name || 'ইউজার'}</b><br><span style="color:var(--text-muted);">${u.email || u.phone || 'N/A'}</span></div>
+                            <span class="btn-primary-sm">ডিটেইলস</span>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function openEditProduct(id, title, brand, price, img, desc, cat, targetLink, isStockOut) {
+            document.getElementById('editProdId').value = id;
+            document.getElementById('editTitleBn').value = title;
+            document.getElementById('editBrand').value = brand;
+            document.getElementById('editPrice').value = price;
+            document.getElementById('editImg').value = img;
+            document.getElementById('editDesc').value = desc;
+            document.getElementById('editCategory').value = cat;
+            document.getElementById('editTargetLink').value = targetLink;
+            document.getElementById('editStockOutMark').checked = isStockOut;
+            updateEditPreview();
+            document.getElementById('panelEditProductForm').classList.add('active');
+        }
+
+        function openEditBanner(id, tag, title, desc, bg, target) {
+            document.getElementById('editBannerId').value = id;
+            document.getElementById('editBannerTag').value = tag;
+            document.getElementById('editBannerTitle').value = title;
+            document.getElementById('editBannerDesc').value = desc;
+            document.getElementById('editBannerBg').value = bg;
+            document.getElementById('editBannerTarget').value = target;
+            updateEditBannerPreview();
+            document.getElementById('panelEditBannerForm').classList.add('active');
+        }
+
+        function updateEditPreview() {
+            let t = document.getElementById('editTitleBn').value;
+            let brand = document.getElementById('editBrand').value ? `[ব্র্যান্ড: ${document.getElementById('editBrand').value}]` : '';
+            let d = document.getElementById('editDesc').value;
+            let p = document.getElementById('editPrice').value;
+            let i = document.getElementById('editImg').value;
+            let isStock = document.getElementById('editStockOutMark').checked;
+            document.getElementById('editPreviewContent').innerHTML = `<b>${t}</b> ${brand} - ${p} ${isStock ? '<span style="color:red">[স্টক আউট]</span>' : ''}<br><span style="color:#666;">${d}</span><br>${i ? `<img src="${i}" style="width:30px; height:30px; object-fit:cover; margin-top:3px; border-radius:4px;">` : ''}`;
+        }
+
+        async function saveEditedProduct() {
+            let id = document.getElementById('editProdId').value;
+            let title = document.getElementById('editTitleBn').value;
+            let brand = document.getElementById('editBrand').value;
+            let desc = document.getElementById('editDesc').value;
+            let price = document.getElementById('editPrice').value;
+            let img = document.getElementById('editImg').value;
+            let category = document.getElementById('editCategory').value;
+            let targetLink = document.getElementById('editTargetLink').value;
+            let isStockOut = document.getElementById('editStockOutMark').checked;
+
+            await db.collection("products").doc(id).update({
+                name: { bn: title, en: title },
+                brand: brand,
+                desc: desc,
+                price: price,
+                numericPrice: parseInt(price.replace(/[^0-9]/g, '')) || 0,
+                imgs: [img],
+                category: category,
+                targetLink: targetLink,
+                stockStatus: isStockOut ? 'Stock Out' : 'In Stock'
+            });
+            alert("✅ প্রডাক্ট সফলভাবে এডিট ও আপডেট হয়েছে!");
+            document.getElementById('panelEditProductForm').classList.remove('active');
+        }
+
+        async function saveEditedBanner() {
+            let id = document.getElementById('editBannerId').value;
+            let tag = document.getElementById('editBannerTag').value;
+            let title = document.getElementById('editBannerTitle').value;
+            let desc = document.getElementById('editBannerDesc').value;
+            let bg = document.getElementById('editBannerBg').value;
+            let target = document.getElementById('editBannerTarget').value;
+
+            await db.collection("banners").doc(id).update({
+                tag: { bn: tag, en: tag },
+                title: { bn: title, en: title },
+                desc: { bn: desc, en: desc },
+                bg: bg,
+                target: target
+            });
+            alert("✅ ব্যানার সফলভাবে আপডেট হয়েছে!");
+            document.getElementById('panelEditBannerForm').classList.remove('active');
+        }
+
+        async function toggleHide(id, currentHidden) {
+            await db.collection("products").doc(id).update({ hidden: !currentHidden });
+        }
+
+        function confirmDelete(id, col) {
+            deleteTargetId = id;
+            deleteTargetCol = col;
+            document.getElementById('deleteConfirmModal').style.display = 'flex';
+        }
+        async function executeDelete() {
+            if(!deleteTargetId) return;
+            await db.collection(deleteTargetCol).doc(deleteTargetId).delete();
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+            alert("✅ সফলভাবে ডিলিট হয়েছে!");
         }
 
         async function toggleBannerStatus(id, currentStatus) {
             let newStatus = currentStatus === 'hide' ? 'show' : 'hide';
             await db.collection("banners").doc(id).update({ status: newStatus });
-            loadAdminBanners();
         }
 
-        async function deleteBanner(id) {
-            await db.collection("banners").doc(id).delete();
-            loadAdminBanners();
+        async function addNewBannerToFirebase() {
+            let tag = document.getElementById('bannerTag').value;
+            let title = document.getElementById('bannerTitle').value;
+            let desc = document.getElementById('bannerDesc').value;
+            let bg = document.getElementById('bannerBg').value;
+            let target = document.getElementById('bannerTarget').value;
+
+            if(!title || !bg) { alert("টাইটেল এবং ব্যাকগ্রাউন্ড লিংক দিন।"); return; }
+
+            await db.collection("banners").add({
+                tag: { bn: tag, en: tag }, 
+                title: { bn: title, en: title },
+                desc: { bn: desc, en: desc },
+                bg, target: target || 'sneakers', status: 'show',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert("✅ ব্যানার সফলভাবে সার্ভারে যুক্ত হয়েছে!");
+            closeAllPanels();
         }
 
-        // 5. Configuration & Shortcut Menus Edit & Save
+        async function addNewProductToFirebase() {
+            let titleBn = document.getElementById('newTitleBn').value;
+            let brand = document.getElementById('newBrand').value;
+            let desc = document.getElementById('newDesc').value;
+            let img = document.getElementById('newImg').value;
+            let category = document.getElementById('newCategory').value;
+            let targetLink = document.getElementById('newTargetLink').value;
+            let price = document.getElementById('newPrice').value;
+
+            if(!titleBn || !price || !img) { alert("নাম, দাম ও ছবি দিন।"); return; }
+
+            await db.collection("products").add({
+                name: { bn: titleBn, en: titleBn },
+                brand: brand,
+                desc: desc,
+                category: category,
+                targetLink: targetLink,
+                price: price,
+                numericPrice: parseInt(price.replace(/[^0-9]/g, '')) || 0,
+                imgs: [img],
+                stockStatus: 'In Stock',
+                hidden: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert("✅ নতুন প্রডাক্ট সার্ভারে সেভ হয়েছে!");
+            closeAllPanels();
+        }
+
         async function loadAdminShortcuts() {
             let list = document.getElementById('adminShortcutList');
             list.innerHTML = '';
-            
-            try {
-                let doc = await db.collection("settings").doc("shortcuts").get();
-                let shortcuts = doc.exists ? doc.data().items : [
-                    {key: 'sneakers', name: 'স্নেকার্স', icon: 'https://img.icons8.com/fluency/96/sneakers.png'},
-                    {key: 'gadgets', name: 'গ্যাজেটস', icon: 'https://img.icons8.com/fluency/96/smart-watch.png'},
-                    {key: 'fashion', name: 'ফ্যাশন', icon: 'https://img.icons8.com/fluency/96/polo-shirt.png'},
-                    {key: 'foods', name: 'ফুডস', icon: 'https://img.icons8.com/fluency/96/honey.png'}
-                ];
+            let doc = await db.collection("settings").doc("shortcuts").get();
+            let items = doc.exists ? doc.data().items : [
+                {key: 'sneakers', name: 'স্নেকার্স', icon: 'https://img.icons8.com/fluency/96/sneakers.png'},
+                {key: 'gadgets', name: 'গ্যাজেটস', icon: 'https://img.icons8.com/fluency/96/smart-watch.png'},
+                {key: 'fashion', name: 'ফ্যাশন', icon: 'https://img.icons8.com/fluency/96/polo-shirt.png'},
+                {key: 'foods', name: 'ফুডস', icon: 'https://img.icons8.com/fluency/96/honey.png'}
+            ];
 
-                shortcuts.forEach((sc, idx) => {
-                    list.innerHTML += `
-                        <div style="background:#fafafa; border:1px solid var(--border-color); padding:4px; border-radius:4px; margin-bottom:4px;" id="shortcut-row-${idx}">
-                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:10px;">
-                                <span><b>${sc.name}</b></span>
-                                <button class="btn-primary-sm" onclick="enableShortcutEdit(${idx})">এডিট</button>
-                            </div>
-                            <div id="shortcut-edit-${idx}" style="display:none; margin-top:4px;">
-                                <input type="text" id="sc-name-${idx}" value="${sc.name}" placeholder="নাম" style="margin-bottom:2px; font-size:9px; padding:3px;">
-                                <input type="text" id="sc-icon-${idx}" value="${sc.icon}" placeholder="আইকন লিংক" style="margin-bottom:2px; font-size:9px; padding:3px;">
-                                <button class="btn-submit" style="margin-top:2px; padding:3px;" onclick="saveSingleShortcut(${idx}, '${sc.key}')">সেভ করুন</button>
-                            </div>
+            items.forEach((sc, idx) => {
+                list.innerHTML += `
+                    <div style="background:#fafafa; border:1px solid var(--border-color); padding:8px; border-radius:6px; margin-bottom:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+                            <span><b>${sc.name}</b></span>
+                            <button class="btn-primary-sm" onclick="document.getElementById('sc-box-${idx}').style.display='block'">এডিট</button>
                         </div>
-                    `;
-                });
-            } catch (e) { console.error(e); }
+                        <div id="sc-box-${idx}" style="display:none; margin-top:6px;">
+                            <input type="text" id="sc-name-${idx}" value="${sc.name}" placeholder="নাম" style="margin-bottom:4px; font-size:10px;">
+                            <input type="text" id="sc-icon-${idx}" value="${sc.icon}" placeholder="আইকন লিংক" style="margin-bottom:4px; font-size:10px;">
+                            <button class="btn-submit" style="padding:5px; font-size:10px;" onclick="saveShortcut(${idx}, '${sc.key}')">সেভ করুন</button>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        function enableShortcutEdit(idx) {
-            let editBox = document.getElementById(`shortcut-edit-${idx}`);
-            editBox.style.display = editBox.style.display === 'none' ? 'block' : 'none';
-        }
-
-        async function saveSingleShortcut(idx, key) {
-            let newName = document.getElementById(`sc-name-${idx}`).value;
-            let newIcon = document.getElementById(`sc-icon-${idx}`).value;
-
-            try {
-                let docRef = db.collection("settings").doc("shortcuts");
-                let doc = await docRef.get();
-                let items = doc.exists ? doc.data().items : [];
-                
-                let target = items.find(i => i.key === key);
-                if(target) {
-                    target.name = newName;
-                    target.icon = newIcon;
-                } else {
-                    items.push({key, name: newName, icon: newIcon});
-                }
-
-                await docRef.set({ items });
-                alert("✅ শর্টকাট মেনু সার্ভারে আপডেট হয়েছে!");
-                loadAdminShortcuts();
-            } catch (e) { alert("সেভ করতে সমস্যা হয়েছে।"); }
+        async function saveShortcut(idx, key) {
+            let name = document.getElementById(`sc-name-${idx}`).value;
+            let icon = document.getElementById(`sc-icon-${idx}`).value;
+            let docRef = db.collection("settings").doc("shortcuts");
+            let doc = await docRef.get();
+            let items = doc.exists ? doc.data().items : [];
+            let target = items.find(i => i.key === key);
+            if(target) { target.name = name; target.icon = icon; }
+            await docRef.set({ items });
+            alert("✅ শর্টকাট মেনু আপডেট হয়েছে!");
+            loadAdminShortcuts();
         }
 
         async function saveSiteConfig() {
             let siteName = document.getElementById('confSiteName').value;
             let tagline = document.getElementById('confTagline').value;
-            let phone = document.getElementById('confPhone').value;
+            let logo = document.getElementById('confLogo').value;
 
-            try {
-                await db.collection("settings").doc("site_config").set({
-                    siteName, tagline, phone, updatedAt: new Date()
-                }, { merge: true });
+            await db.collection("settings").doc("site_config").set({
+                siteName, tagline, logo, updatedAt: new Date()
+            }, { merge: true });
+            alert("✅ সাইট কনফিগারেশন আপডেট হয়েছে!");
+            closeAllPanels();
+        }
 
-                alert("✅ কনফিগারেশন সফলভাবে সেভ হয়েছে!");
-                closeAllPanels();
-            } catch (error) {
-                alert("সেভ করতে সমস্যা হয়েছে।");
-            }
+        async function saveSiteSettings() {
+            let layout = document.getElementById('setHomeLayout').value;
+            let profile = document.getElementById('setProfileCtrl').value;
+            let menu = document.getElementById('setUserMenu').value;
+
+            await db.collection("settings").doc("site_settings").set({
+                layout, profile, menu, updatedAt: new Date()
+            }, { merge: true });
+            alert("✅ সেটিংস ফায়ারবেজে সেভ হয়েছে!");
+            closeAllPanels();
         }
     </script>
 </body>
