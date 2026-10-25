@@ -8,6 +8,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase SDK Compat Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // আপনার রিয়েল ফায়ারবেজ কনফিগারেশন
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPyJ9-DJq0Hvq8k0Uf_wdz78GgKm9n_sw",
+            authDomain: "salervai.firebaseapp.com",
+            projectId: "salervai",
+            storageBucket: "salervai.firebasestorage.app",
+            messagingSenderId: "929355581127",
+            appId: "1:929355581127:web:a23ac5306301a092e020e2",
+            measurementId: "G-JLCHVWQ7WJ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+
     <style>
         :root {
             --primary-color: #0d6efd;
@@ -100,7 +121,6 @@
             gap: 8px;
         }
 
-        /* Compact Nav Login Button */
         .nav-login-btn {
             background: var(--primary-color);
             color: white;
@@ -360,7 +380,7 @@
             cursor: pointer;
         }
 
-        /* Product Carousel (Horizontal Scroll: Mobile 2, Tablet 3, Desktop 6 items visible per line) */
+        /* Product Carousel */
         .product-carousel {
             display: flex;
             gap: 8px;
@@ -826,6 +846,13 @@
     <div id="homePage" class="page-view active-page">
         <div class="container">
             
+            <!-- এককালীন অটো-আপলোড বাটন (ডাটা আপলোড হওয়ার সাথে সাথে নিজে থেকেই মুছে যাবে) -->
+            <div id="firebaseUploadContainer" style="margin: 10px 0; text-align: center;">
+                <button onclick="uploadDemoProductsToFirebase()" style="width: 100%; background: #28a745; color: white; padding: 10px; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    🚀 ডেমো প্রডাক্টগুলো ফায়ারবেজে সেভ করুন (একবার ক্লিক করুন)
+                </button>
+            </div>
+
             <!-- Banner Slider -->
             <div class="banner-slider-container" id="bannerSliderContainer">
                 <div class="banner-track" id="bannerTrack"></div>
@@ -835,19 +862,19 @@
             <!-- Shortcut Categories -->
             <div class="shortcut-grid">
                 <div class="shortcut-card glow-effect" onclick="openCategoryView('sneakers')">
-                    <img src="https://img.icons8.com/color/96/sneakers.png" class="shortcut-img" alt="Sneakers" loading="lazy">
+                    <img src="https://img.icons8.com/fluency/96/sneakers.png" class="shortcut-img" alt="Sneakers" loading="lazy">
                     <span id="catSneakers">স্নেকার্স</span>
                 </div>
                 <div class="shortcut-card glow-effect" onclick="openCategoryView('gadgets')">
-                    <img src="https://img.icons8.com/color/96/smart-watch.png" class="shortcut-img" alt="Gadgets" loading="lazy">
+                    <img src="https://img.icons8.com/fluency/96/smart-watch.png" class="shortcut-img" alt="Gadgets" loading="lazy">
                     <span id="catGadgets">গ্যাজেটস</span>
                 </div>
                 <div class="shortcut-card glow-effect" onclick="openCategoryView('fashion')">
-                    <img src="https://img.icons8.com/color/96/polo-shirt.png" class="shortcut-img" alt="Fashion" loading="lazy">
+                    <img src="https://img.icons8.com/fluency/96/polo-shirt.png" class="shortcut-img" alt="Fashion" loading="lazy">
                     <span id="catFashion">ফ্যাশন</span>
                 </div>
                 <div class="shortcut-card glow-effect" onclick="openCategoryView('foods')">
-                    <img src="https://img.icons8.com/color/96/honey.png" class="shortcut-img" alt="Foods" loading="lazy">
+                    <img src="https://img.icons8.com/fluency/96/honey.png" class="shortcut-img" alt="Foods" loading="lazy">
                     <span id="catFoods">ফুডস</span>
                 </div>
             </div>
@@ -1259,6 +1286,43 @@
     </div>
 
     <script>
+        // ফায়ারবেজে ডেমো প্রডাক্ট অটো-আপলোড করার ফাংশন (আপলোড শেষে বাটন নিজে থেকেই ডিলিট হয়ে যাবে)
+        async function uploadDemoProductsToFirebase() {
+            if(!confirm("আপনি কি ডেমো প্রডাক্টগুলো ফায়ারবেজ ডাটাবেজে আপলোড করতে চান?")) return;
+            
+            try {
+                for (const categoryName in allProducts) {
+                    const productList = allProducts[categoryName];
+                    for (const product of productList) {
+                        await db.collection("products").add({
+                            category: categoryName,
+                            brand: product.brand,
+                            model: product.model,
+                            color: product.color,
+                            size: product.size,
+                            washable: product.washable,
+                            name: product.name,
+                            sub: product.sub,
+                            price: product.price,
+                            oldPrice: product.oldPrice,
+                            numericPrice: product.numericPrice,
+                            discount: product.discount,
+                            rating: product.rating,
+                            imgs: product.imgs,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                }
+                alert('আলহামদুলিল্লাহ! সকল ডেমো প্রডাক্ট সফলভাবে ফায়ারবেজে সেভ হয়েছে।');
+                // বাটনটি স্ক্রিন থেকে রিমুভ বা ডিলিট করে দেওয়া
+                const btnContainer = document.getElementById('firebaseUploadContainer');
+                if(btnContainer) btnContainer.remove();
+            } catch (error) {
+                console.error("ত্রুটি:", error);
+                alert('প্রডাক্ট আপলোড করতে সমস্যা হয়েছে: ' + error.message);
+            }
+        }
+
         let isUserLoggedIn = false;
 
         function updateLoginButtonState() {
